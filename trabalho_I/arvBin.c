@@ -4,142 +4,129 @@
 #include <time.h>
 #include "arvBin.h"
 
+typedef struct serie{
+      int codigo;
+      char titulo[50];
+      int numTemp;
+      Temporada *arvTemp;
+      Serie *esq, *dir;
+}Serie;
+//código, título, número de temporadas
+
+typedef struct temporada{
+      int numTem;
+      char titulo[50];
+      int quantEp;
+      char ano;
+      Participantes *participantes;
+      Temporada *esq, *dir;
+}Temporada;
+//número da temporada, título, quantidade de episódios, ano, endereço para ula lista simples  de participantes.
+
+typedef struct participantes
+{
+      char nomeDoArtista[50];
+      char nomeParticipante[50];
+      char descricao[100];
+      Participantes *prox; 
+}Participantes;
+
 //CRIA A ARVORE PARA AS SERIES
-Serie *criaNoSerie(int codigo, char titulo[], int numTemp){
-
-      Serie *new;
-      new = (Serie*)malloc(sizeof(Serie));
-      new->codigo = codigo;
-      strcpy(new->titulo, titulo);
-      new->numTemp = numTemp;
-      new->arvTemp = NULL;
-      new->esq = NULL;
-      new->dir = NULL;
-      return new;
-
+Serie *criaNoSerie(int codigo, char titulo[], int numTemp ){
+      Serie *novaSerie = (Serie*)malloc(sizeof(Serie));
+      if(novaSerie != NULL){
+            novaSerie->codigo = codigo;
+            strcpy(novaSerie->titulo, titulo);
+            novaSerie->numTemp;
+            novaSerie->arvTemp = NULL;
+            novaSerie->esq = NULL;
+            novaSerie->dir = NULL;
+            return novaSerie;
+      }
+      return NULL;
+      
 }
 
 //INSERE UMA SERIE A PARTIR DO CODIGO
-void insere_Serie(Serie **raiz, Serie *serie){
+Serie *insere_Serie(Serie *raiz, Serie *novaSerie){
 
-      if (*raiz == NULL)
-      {
-            *raiz = serie;
+      if (raiz == NULL){
+            return novaSerie;
       }
-      else if (serie->codigo < (*raiz)->codigo)
-      {
-            insere_Serie(&(*raiz)->esq, serie);
+      if (novaSerie->codigo < raiz->codigo){
+            raiz->esq = insere_Serie(raiz->esq, novaSerie);
+      }else if(novaSerie->codigo > raiz->codigo){
+            raiz->dir = insere_Serie(raiz->dir, novaSerie);
       }
-      else
+      return raiz;
+}
+
+Temporada *criarTemporada(int numeroTemp, char titulo[], int quantEp, char ano[] ){
+      Temporada *novaTemp = (Temporada*)malloc(sizeof(Temporada));
+      if(novaTemp != NULL){
+            novaTemp->numTem;
+            strcpy(novaTemp->titulo, titulo);
+            novaTemp->quantEp =  quantEp;
+            strcpy(novaTemp->ano, ano);
+            novaTemp->participantes = NULL;
+            return novaTemp;
+      }
+      return NULL;
+}
+
+Temporada *insere_Temporada(Temporada *raiz, Temporada *novaTempora){
+      if(raiz == NULL){
+            return novaTempora;
+      }
+      if(novaTempora->numTem < raiz->numTem){
+            raiz->esq = insere_Temporada(raiz->esq, novaTempora);
+      }else if(novaTempora->numTem > raiz->numTem){
+            raiz->dir = insere_Temporada(raiz->esq, novaTempora);
+      }
+      return raiz;
+}
+
+Participantes *criar_Participantes(char nomeArtista[], char nomeParticipante, char descricao[]){
+      Participantes *novoParticipante = (Participantes*)malloc(sizeof(Participantes));
+      if(novoParticipante != NULL){
+            strcpy(novoParticipante->nomeDoArtista, nomeArtista);
+            strcpy(novoParticipante->nomeParticipante, nomeParticipante);
+            strcpy(novoParticipante->descricao, descricao);
+            return novoParticipante;
+      }
+      return NULL;
+}
+
+Participantes *inserir_Participante(Participantes *lista, Participantes *novoParticipante){
+      if(lista == NULL || strcmp(novoParticipante->nomeDoArtista, lista->nomeDoArtista) < 0){
+            novoParticipante->prox =  lista;
+            return novoParticipante;
+      }else{
+            lista->prox = inserir_Participante(lista->prox, novoParticipante);
+            return lista;
+      }
+      return NULL;
+}
+
+void listarParticipante(Participantes *lista){
+      while (lista != NULL)
       {
-            insere_Serie(&(*raiz)->dir, serie);
+            printf("Nome do artista: %s\n Nome do Personagem: %s\n Descricao: %s\n", lista->nomeDoArtista, lista->nomeParticipante, lista->descricao);
+            lista = lista->prox;
+      }
+      
+}
+
+void listarTemporada(Temporada *raiz){
+      if(raiz  != NULL){
+            listarTemporada(raiz->esq);
+            printf("Numero da temporada: %d\n Titulo:  %s\n Quantidade de Episodio: %d\n Ano: %d\n Participantes da Tempora: \n", raiz->numTem, raiz->titulo, raiz->quantEp, raiz->ano);
+            listarParticipante(raiz->participantes);
+            printf("\n");
+            listarTemporada(raiz->dir);
       }
 }
 
-Serie *busca_Serie(Serie **serie, int codigo){
-
-      Serie **idEncontrado;
-      if((*serie) != NULL){
-            if ((*serie)->codigo > codigo)
-            {
-                  idEncontrado = busca_Serie(&(*serie)->esq, codigo);
-            }
-            else if ((*serie)->codigo < codigo)
-            {
-                  idEncontrado = busca_Serie(&(*serie)->dir, codigo);
-            }
-            else
-            {
-                  idEncontrado = serie;
-            }
-      }
-      else
-      {
-            idEncontrado = serie;
-      }    
+void inserirTemporadaAserie(Serie *serie, Temporada *temporada){
+      serie->arvTemp = insere_Temporada(serie->arvTemp,temporada);
 }
-
-Serie *endereco(Serie *raiz){
-      Serie *aux;
-      if (raiz->esq)
-      {
-            aux = raiz->esq;
-      }
-      else
-      {
-            aux = raiz->dir;
-      }
-      return aux;
-}
-
-void busca_folha(Serie **filho_1, Serie *filho_2){
-      if (*filho_1)
-      {
-            busca_folha(&((*filho_1)->dir), filho_2);
-      }
-      else
-      {
-            (*filho_1) = filho_2;
-      }
-}
-
-void remover_serie(Serie **raiz, int codigo){
-      if (*raiz != NULL)
-      {
-            Serie *aux;
-            if ((*raiz)->codigo == codigo)
-            {
-                  if ((*raiz)->esq == NULL && (*raiz)->dir == NULL) // se nao tem filhos
-                  {
-                        free(*raiz);
-                        (*raiz) = NULL;                        
-                  }
-                  else if ((*raiz)->esq == NULL || (*raiz)->dir == NULL)
-                  {
-                        Serie *id_filho;
-                        if ((*raiz)->esq != NULL)
-                        {
-                              aux = *raiz;
-                              id_filho = (*raiz)->esq;
-                              *raiz = id_filho;
-                              free(aux);
-                              aux = NULL;
-                        }
-                        else
-                        {
-                              aux = *raiz;
-                              id_filho = (*raiz)->dir;
-                              *raiz = id_filho;
-                              free(aux);
-                              aux = NULL;                              
-                        }
-                  }
-                  else
-                  {
-                        Serie *serie;
-                        aux = *raiz;
-                        serie = (*raiz)->esq;
-                        busca_folha(&((*raiz)->esq), (*raiz)->dir);
-                        *raiz = serie;
-                        aux = NULL;
-                  }
-            }
-            else if (codigo < (*raiz)->codigo)
-            {
-                  remover_serie((*raiz)->esq, codigo);
-            }
-            else
-            {
-                  remover_serie((*raiz)->dir, codigo);
-            }
-      }
-}
-
-void imprime_Serie(Serie *raiz){
-          if (raiz != NULL) {
-        imprimirSeries(raiz->esq);
-        printf("\nDados da série:\nCodigo: %d\nTitulo: %s\nNumero de temporadas: %d\n\n", raiz->codigo, raiz->titulo, raiz->numTemp);
-        imprimirSeries(raiz->dir);
-    }
-}
-
