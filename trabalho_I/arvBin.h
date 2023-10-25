@@ -1,32 +1,27 @@
-typedef struct serie{
-      int codigo;
-      char titulo[50];
-      int numTemp;
-      Temporada *arvTemp;
-      Serie *esq, *dir;
-}Serie;
-//código, título, número de temporadas
+typedef struct serie Serie;
 
-typedef struct temporada{
-      int numTem;
-      char titulo[50];
-      int quantEp;
-      char ano;
-      Part participantes;
-      Temporada *esq, *dir;
-}Temporada;
-//número da temporada, título, quantidade de episódios, ano, endereço para ula lista simples  de participantes.
+typedef struct temporada Temporada;
 
-typedef struct participantes
-{
-      char nome[50];
-      Part *prox; 
-}Part;
+typedef struct participantes Participantes;
 
 Serie *criaNoSerie(int codigo, char titulo[], int numTemp);
+Serie *insere_Serie(Serie *raiz, Serie *novaSerie);
+
+Temporada *criarTemporada(int numeroTemp, char titulo[], int quantEp, char ano[] );
+Temporada *insere_Temporada(Temporada *raiz, Temporada *novaTempora);
+
+
 Serie *busca_Serie(Serie **serie, int codigo);
 Serie *endereco(Serie *raiz);
-void insere_Serie(Serie **raiz, Serie *serie);
+
+Participantes *criar_Participantes(char nomeArtista[], char nomeParticipante, char descricao[]);
+Participantes *inserir_Participante(Participantes *lista, Participantes *novoParticipante);
+
+
+void inserirTemporadaAserie(Serie *serie, Temporada *temporada);
+void listarParticipante(Participantes *lista);
+void listarTemporada(Temporada *raiz);
+
 void imprime_Serie(Serie *raiz);
 int imprime_Serie_Por_Codigo(Serie *raiz, int codigo);
 void imprime_Todos_Personagens(Serie *raiz, int codigo);
@@ -34,4 +29,3 @@ void imprime_Personagens_Determinada_Temp(Serie *raiz, int codigo);
 void remover_serie(Serie **raiz, int codigo);
 void busca_folha(Serie **filho_1, Serie *filho_2);
 
-Temporada criaNoTemp(int numTemp, char titulo[], int quantidade_Ep, char ano, Part *list);
