@@ -4,6 +4,9 @@
 #include <time.h>
 #include "arvBin.h"
 
+
+// Testar usando ponteiro para ponteiro
+
 typedef struct serie{
       int codigo;
       char titulo[50];
@@ -32,81 +35,67 @@ typedef struct participantes
 }Participantes;
 
 //CRIA A ARVORE PARA AS SERIES
-Serie *criaNoSerie(int codigo, char titulo[], int numTemp ){
-      Serie *novaSerie = (Serie*)malloc(sizeof(Serie));
-      if(novaSerie != NULL){
-            novaSerie->codigo = codigo;
-            strcpy(novaSerie->titulo, titulo);
-            novaSerie->numTemp;
-            novaSerie->arvTemp = NULL;
-            novaSerie->esq = NULL;
-            novaSerie->dir = NULL;
-            return novaSerie;
-      }
+Serie *criaNoSerie(){
       return NULL;
       
 }
+Participantes *criar_Participantes(){
+      return NULL;
+}
+
+
+Participantes *inserir_Participante(Participantes *lista, char nomeDoArtista,char nomeParticipante,char descricao ){
+      Participantes *aux = (Participantes*)malloc(sizeof(Participantes));
+      if(lista == NULL){
+            strcpy(aux->nomeDoArtista, nomeDoArtista);
+            strcpy(aux->nomeParticipante, nomeParticipante);
+            strcpy(aux->descricao, descricao);
+            aux->prox =  lista;
+            return aux;
+      }
+      return NULL;
+}
 
 //INSERE UMA SERIE A PARTIR DO CODIGO
-Serie *insere_Serie(Serie *raiz, Serie *novaSerie){
-
-      if (raiz == NULL){
-            return novaSerie;
+void insere_Serie(Serie **raiz, int codigo, char titulo[], int numTemp){
+      if (*raiz == NULL){
+            (*raiz)->codigo = codigo;
+            (*raiz)->numTemp = numTemp;
+            strcpy((*raiz)->titulo, titulo);
+            (*raiz)->esq = NULL;
+            (*raiz)->dir = NULL;
       }
-      if (novaSerie->codigo < raiz->codigo){
-            raiz->esq = insere_Serie(raiz->esq, novaSerie);
-      }else if(novaSerie->codigo > raiz->codigo){
-            raiz->dir = insere_Serie(raiz->dir, novaSerie);
-      }
-      return raiz;
-}
-
-Temporada *criarTemporada(int numeroTemp, char titulo[], int quantEp, char ano[] ){
-      Temporada *novaTemp = (Temporada*)malloc(sizeof(Temporada));
-      if(novaTemp != NULL){
-            novaTemp->numTem;
-            strcpy(novaTemp->titulo, titulo);
-            novaTemp->quantEp =  quantEp;
-            strcpy(novaTemp->ano, ano);
-            novaTemp->participantes = NULL;
-            return novaTemp;
-      }
-      return NULL;
-}
-
-Temporada *insere_Temporada(Temporada *raiz, Temporada *novaTempora){
-      if(raiz == NULL){
-            return novaTempora;
-      }
-      if(novaTempora->numTem < raiz->numTem){
-            raiz->esq = insere_Temporada(raiz->esq, novaTempora);
-      }else if(novaTempora->numTem > raiz->numTem){
-            raiz->dir = insere_Temporada(raiz->esq, novaTempora);
-      }
-      return raiz;
-}
-
-Participantes *criar_Participantes(char nomeArtista[], char nomeParticipante, char descricao[]){
-      Participantes *novoParticipante = (Participantes*)malloc(sizeof(Participantes));
-      if(novoParticipante != NULL){
-            strcpy(novoParticipante->nomeDoArtista, nomeArtista);
-            strcpy(novoParticipante->nomeParticipante, nomeParticipante);
-            strcpy(novoParticipante->descricao, descricao);
-            return novoParticipante;
-      }
-      return NULL;
-}
-
-Participantes *inserir_Participante(Participantes *lista, Participantes *novoParticipante){
-      if(lista == NULL || strcmp(novoParticipante->nomeDoArtista, lista->nomeDoArtista) < 0){
-            novoParticipante->prox =  lista;
-            return novoParticipante;
+      if (codigo < (*raiz)->codigo){
+            insere_Serie(&((*raiz)->esq), codigo, titulo, numTemp);
       }else{
-            lista->prox = inserir_Participante(lista->prox, novoParticipante);
-            return lista;
+            insere_Serie(&((*raiz)->dir), codigo, titulo, numTemp);
+
       }
+}
+
+Temporada *criarTemporada(){
       return NULL;
 }
+
+void insere_Temporada(Temporada **raiz, int numTemporada, char titulo[], int quantEp, char ano){
+
+      if(*raiz == NULL){
+
+            (*raiz)->numTem = numTemporada;
+            strcpy((*raiz)->titulo, titulo);
+            (*raiz)->quantEp = quantEp;
+            (*raiz)->participantes = NULL;
+            (*raiz)->esq = NULL;
+            (*raiz)->dir = NULL;
+      }
+      if(numTemporada < (*raiz)->numTem){
+            insere_Temporada(&((*raiz)->esq), numTemporada,titulo,quantEp,ano);
+      }else{
+            insere_Temporada(&((*raiz)->dir), numTemporada,titulo,quantEp,ano);
+      }
+}
+
+
 
 void listarParticipante(Participantes *lista){
       while (lista != NULL)
@@ -115,6 +104,14 @@ void listarParticipante(Participantes *lista){
             lista = lista->prox;
       }
       
+}
+
+void imprime_Serie(Serie *raiz){
+      if(raiz != NULL){
+            imprime_Serie(raiz->esq);
+            printf("Codigo: %d\nTitulo: %s\n Numero de temporadas: %d\n", raiz->codigo, raiz->titulo, raiz->numTemp);
+            imprime_Serie(raiz->dir);
+      }
 }
 
 void listarTemporada(Temporada *raiz){
@@ -127,6 +124,9 @@ void listarTemporada(Temporada *raiz){
       }
 }
 
-void inserirTemporadaAserie(Serie *serie, Temporada *temporada){
-      serie->arvTemp = insere_Temporada(serie->arvTemp,temporada);
+
+// ver uma outra forma defazer essa função
+/* void inserirTemporadaAserie(Serie *serie, Temporada *temporada){
+      insere_Temporada(serie->arvTemp,temporada);
 }
+ */
