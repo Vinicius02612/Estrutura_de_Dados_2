@@ -4,18 +4,18 @@ typedef struct temporada Temporada;
 
 typedef struct participantes Participantes;
 
-Serie *criaNoSerie(int codigo, char titulo[], int numTemp);
-Serie *insere_Serie(Serie *raiz, Serie *novaSerie);
+Serie *criaNoSerie();
+void insere_Serie(Serie **raiz, int codigo, char titulo[], int numTemp);
 
-Temporada *criarTemporada(int numeroTemp, char titulo[], int quantEp, char ano[] );
-Temporada *insere_Temporada(Temporada *raiz, Temporada *novaTempora);
+Temporada *criarTemporada();
+void insere_Temporada(Temporada **raiz,int numTemporada, char titulo[], int quantEp, char an);
 
 
 Serie *busca_Serie(Serie **serie, int codigo);
 Serie *endereco(Serie *raiz);
 
-Participantes *criar_Participantes(char nomeArtista[], char nomeParticipante, char descricao[]);
-Participantes *inserir_Participante(Participantes *lista, Participantes *novoParticipante);
+Participantes *criar_Participantes();
+Participantes *inserir_Participante(Participantes *lista,char nomeDoArtista,char nomeParticipante,char descricao );
 
 
 void inserirTemporadaAserie(Serie *serie, Temporada *temporada);
