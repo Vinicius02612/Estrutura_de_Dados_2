@@ -1,132 +1,223 @@
-#include <stdio.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 #include <time.h>
 #include "arvBin.h"
 
 
-// Testar usando ponteiro para ponteiro
-
-typedef struct serie{
-      int codigo;
-      char titulo[50];
-      int numTemp;
-      Temporada *arvTemp;
-      Serie *esq, *dir;
-}Serie;
-//código, título, número de temporadas
-
-typedef struct temporada{
-      int numTem;
-      char titulo[50];
-      int quantEp;
-      char ano;
-      Participantes *participantes;
-      Temporada *esq, *dir;
-}Temporada;
-//número da temporada, título, quantidade de episódios, ano, endereço para ula lista simples  de participantes.
-
+// struct para criar lista de participantes
 typedef struct participantes
 {
-      char nomeDoArtista[50];
-      char nomeParticipante[50];
-      char descricao[100];
-      Participantes *prox; 
+    int id;
+    char nomeArtista[50];
+    char nomePersonagem[50];
+    char descricao[50];
+    Participantes *proximo;
 }Participantes;
 
-//CRIA A ARVORE PARA AS SERIES
-Serie *criaNoSerie(){
-      return NULL;
-      
-}
-Participantes *criar_Participantes(){
-      return NULL;
-}
+//struct para armazenar dados da temporada
+typedef struct dadoTemporada{
+    int numTem;
+    char titulo[50];
+    int quantEp;
+    char ano[50];
+    Participantes *participante;
+}DadoTemporada;
 
 
-Participantes *inserir_Participante(Participantes *lista, char nomeDoArtista,char nomeParticipante,char descricao ){
-      Participantes *aux = (Participantes*)malloc(sizeof(Participantes));
-      if(lista == NULL){
-            strcpy(aux->nomeDoArtista, nomeDoArtista);
-            strcpy(aux->nomeParticipante, nomeParticipante);
-            strcpy(aux->descricao, descricao);
-            aux->prox =  lista;
+// struct para armazenar apenas os dados de cada series
+typedef struct dadoSerie{
+    int codigo;
+    char titulo[50];
+    int numeroDeTemporada;
+    ArvoreTemporada *temporada;
+}DadoSeries;
+
+
+// arvore da serie que tem como dado  a TAD do tipo DadoSerie
+typedef struct arvoreSerie{
+    DadoSeries dado;
+    ArvoreSerie *esq, *dir;
+}ArvoreSerie;
+
+//arvore temporada que tem como dado a TAD do tipo DadoTemporada
+typedef struct arvoreTemporada{
+    DadoTemporada  temporada;
+    ArvoreTemporada *esq, *dir;
+}ArvoreTemporada;
+
+
+
+ArvoreSerie *criarArvoreSerie(){
+    return NULL;
+}
+
+ArvoreTemporada *criaAvoreTemporada(){
+    return NULL;
+}
+
+Participantes *criaListaParticipante(){
+    /* Participantes *lista = (Participantes*)malloc(sizeof(Participantes));
+    if(lista != NULL)
+        return lista; */
+    return NULL;
+}
+// inserir participante da temporada
+Participantes *insereParticipante(Participantes *lista, int id, char nomeDoArtista[], char nomeDoPersongem[], char descricao[]){
+    Participantes *auxParicipante = (Participantes*)malloc(sizeof(Participantes));
+    if(auxParicipante != NULL){
+        auxParicipante->id = id;
+        strcpy(auxParicipante->nomeArtista, nomeDoArtista);
+        strcpy(auxParicipante->nomePersonagem, nomeDoPersongem);
+        strcpy(auxParicipante->descricao, descricao);
+
+        if(lista == NULL){ // caso a lista esteja vazia e é o primeiro elemento a ser inserido
+            auxParicipante->proximo = NULL;
+            lista = auxParicipante;
+        }else{
+
+            Participantes *ant, *atual = (Participantes*)malloc(sizeof(Participantes));
+            while(atual != NULL && strcmp(atual->nomeArtista, lista->nomeArtista) < 0  ){
+                ant = atual;
+                atual = atual->proximo;
+            }
+            if(atual == NULL){
+                auxParicipante->proximo = lista;
+                lista = auxParicipante;
+            }else{
+                auxParicipante->proximo = atual;
+                ant->proximo = auxParicipante;
+            }
+        }
+        
+    }
+
+    return lista;
+}
+
+Participantes *buscaParticipantes(Participantes *lista, int id){
+    Participantes *aux = lista;
+    while (aux != NULL)
+    {
+        if(aux->id == id){
             return aux;
-      }
-      return NULL;
+        }
+        aux = aux->proximo;
+    }
 }
 
-//INSERE UMA SERIE A PARTIR DO CODIGO
-void insere_Serie(Serie **raiz, int codigo, char titulo[], int numTemp){
-      if (*raiz == NULL){
-            (*raiz)->codigo = codigo;
-            (*raiz)->numTemp = numTemp;
-            strcpy((*raiz)->titulo, titulo);
-            (*raiz)->esq = NULL;
-            (*raiz)->dir = NULL;
-      }
-      if (codigo < (*raiz)->codigo){
-            insere_Serie(&((*raiz)->esq), codigo, titulo, numTemp);
-      }else{
-            insere_Serie(&((*raiz)->dir), codigo, titulo, numTemp);
+// insere os dados da temporada
+void insereTemporada(ArvoreTemporada **raiz,int numTemp, char tituloTemp[], int quantEpisodio, char ano[]){
 
-      }
+    if(*raiz == NULL){
+        (*raiz) = (ArvoreTemporada*)malloc(sizeof(ArvoreTemporada));
+        (*raiz)->temporada.numTem = numTemp;
+        strcpy((*raiz)->temporada.titulo, tituloTemp);
+        (*raiz)->temporada.quantEp = quantEpisodio;
+        strcpy((*raiz)->temporada.ano, ano);
+        (*raiz)->temporada.participante = NULL;
+
+        (*raiz)->esq = NULL;
+        (*raiz)->dir = NULL;
+    }else{
+        if(numTemp < (*raiz)->temporada.numTem)
+            insereTemporada(&((*raiz)->esq), numTemp, tituloTemp, quantEpisodio, ano);
+        else
+            insereTemporada(&((*raiz)->dir), numTemp, tituloTemp, quantEpisodio, ano);
+    }
 }
 
-Temporada *criarTemporada(){
-      return NULL;
+// insere dados da serie na arvore
+void inserirSeries(ArvoreSerie **raiz, int codigo, int numeroTemporada, char titulo[]){
+    if(*raiz == NULL){
+        (*raiz) = (ArvoreSerie*)malloc(sizeof(ArvoreSerie));
+        (*raiz)->dado.codigo = codigo;
+        (*raiz)->dado.numeroDeTemporada = numeroTemporada;
+        strcpy((*raiz)->dado.titulo, titulo);
+        (*raiz)->dado.codigo = codigo;
+        (*raiz)->dado.temporada = NULL;
+        (*raiz)->esq = NULL;
+        (*raiz)->dir = NULL;
+    }else{
+        if(codigo < (*raiz)->dado.codigo)
+            inserirSeries(&((*raiz)->esq), codigo, numeroTemporada, titulo);
+        else
+            inserirSeries(&((*raiz)->dir),codigo, numeroTemporada, titulo );
+    }
 }
 
-void insere_Temporada(Temporada **raiz, int numTemporada, char titulo[], int quantEp, char ano){
+// funcão que buscar uma series com base em seu codigo
+ArvoreSerie *BuscarSeries( ArvoreSerie *raizS, int codigo){
+    if(raizS !=NULL){
+        if(codigo == raizS->dado.codigo){
+            return raizS;
+        }else if(codigo < raizS->dado.codigo){
+            return BuscarSeries(raizS->esq, codigo);
+        }else{
+            return BuscarSeries(raizS->dir, codigo);
+        }
+    }
+}
 
-      if(*raiz == NULL){
+// função que insere a temporada na arvore de seires
+ArvoreSerie *insereTemporadaNaSerie(ArvoreSerie *raizS, ArvoreTemporada *raizT, int codigo){
+    ArvoreSerie *aux = BuscarSeries(raizS, codigo);
+    printf(" Codigo encontrado: %d\n", aux->dado.codigo);
+    if(aux != NULL && aux->dado.codigo == codigo){
+        aux->dado.temporada = raizT;
+    }
+    return aux;
+}
 
-            (*raiz)->numTem = numTemporada;
-            strcpy((*raiz)->titulo, titulo);
-            (*raiz)->quantEp = quantEp;
-            (*raiz)->participantes = NULL;
-            (*raiz)->esq = NULL;
-            (*raiz)->dir = NULL;
-      }
-      if(numTemporada < (*raiz)->numTem){
-            insere_Temporada(&((*raiz)->esq), numTemporada,titulo,quantEp,ano);
-      }else{
-            insere_Temporada(&((*raiz)->dir), numTemporada,titulo,quantEp,ano);
-      }
+void imprimeParticipante(Participantes *lista){
+    Participantes *aux = lista;
+    if(lista != NULL){
+        while (aux != NULL){
+            printf("Nome do artista: %s\nNome do Personagem: %s\nDescricao: %s\n", aux->nomeArtista, aux->nomePersonagem, aux->descricao);
+            aux = aux->proximo;
+        }
+    }
+}
+
+void imprimeTemporada(DadoTemporada temporada){
+    printf("\n\tNumero da temporada: %d\n\tTitulo: %s\n\tQuantidade de episódios: %d\n\tAno: %s\n", temporada.numTem, temporada.titulo, temporada.quantEp, temporada.ano);
+}
+
+void imprimeSeries(DadoSeries serie){
+    printf(" Codigo: %d\n Titulo: %s\n Quantidade de Epsodio: %d\n Temporadas:\n",serie.codigo, serie.titulo, serie.numeroDeTemporada);
+    imprimeArvoreTemporada(serie.temporada);
 }
 
 
-
-void listarParticipante(Participantes *lista){
-      while (lista != NULL)
-      {
-            printf("Nome do artista: %s\n Nome do Personagem: %s\n Descricao: %s\n", lista->nomeDoArtista, lista->nomeParticipante, lista->descricao);
-            lista = lista->prox;
-      }
-      
-}
-
-void imprime_Serie(Serie *raiz){
-      if(raiz != NULL){
-            imprime_Serie(raiz->esq);
-            printf("Codigo: %d\nTitulo: %s\n Numero de temporadas: %d\n", raiz->codigo, raiz->titulo, raiz->numTemp);
-            imprime_Serie(raiz->dir);
-      }
-}
-
-void listarTemporada(Temporada *raiz){
-      if(raiz  != NULL){
-            listarTemporada(raiz->esq);
-            printf("Numero da temporada: %d\n Titulo:  %s\n Quantidade de Episodio: %d\n Ano: %d\n Participantes da Tempora: \n", raiz->numTem, raiz->titulo, raiz->quantEp, raiz->ano);
-            listarParticipante(raiz->participantes);
-            printf("\n");
-            listarTemporada(raiz->dir);
-      }
+void imprimeSeriesPeloCodigo(ArvoreSerie *raiz, int codigo){
+    ArvoreSerie *aux = BuscarSeries(raiz, codigo);
+    if(aux){
+         printf(" Codigo: %d\n Titulo: %s\n Quantidade de Epsodio: %d\n Temporadas:\n",aux->dado.codigo, aux->dado.titulo, aux->dado.numeroDeTemporada);
+        imprimeArvoreTemporada(aux->dado.temporada);
+    }
+   
 }
 
 
-// ver uma outra forma defazer essa função
-/* void inserirTemporadaAserie(Serie *serie, Temporada *temporada){
-      insere_Temporada(serie->arvTemp,temporada);
+//Imprimir os dados de todas as temporadas de uma série, cujo o usuário informe o código da série.
+
+
+// imprimindo os dados da arvore serie de forma crescente...
+void imprimeArvoreSeries(ArvoreSerie *raiz){
+
+    if(raiz != NULL){
+      imprimeArvoreSeries(raiz->esq);
+      imprimeSeries(raiz->dado);
+      imprimeArvoreSeries(raiz->dir);
+      printf("\n");
+    }
 }
- */
+
+void imprimeArvoreTemporada(ArvoreTemporada *raiz){
+    if(raiz != NULL){
+        imprimeArvoreTemporada(raiz->esq);
+        imprimeTemporada(raiz->temporada);
+        imprimeArvoreTemporada(raiz->dir);
+        printf("\n");
+    }
+}
