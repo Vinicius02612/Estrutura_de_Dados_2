@@ -1,31 +1,48 @@
-typedef struct serie Serie;
+/* 
+(a) Séries: código, título, número de temporadas, um endereço para uma árvore binária de busca contendo
+informações de cada temporada. A árvore deve ser organizada pelo código da série.
 
-typedef struct temporada Temporada;
+********
+(a) Imprimir em ordem pelo código da série: o título, o número de temporadas.
+(b) Imprimir os dados de todas as temporadas de uma série, cujo o usuário informe o código da série.
+(c) Imprimir todos os personagens de uma determinada temporada de uma dada série, cujo o usuário
+informe o código da série e o número da temporada.
+(d) Imprimir o nome de todos os artistas que interpretaram um determinado personagem em todas as
+temporadas de uma dada série, cujo o usuário informe o código da série. 
+*/
 
 typedef struct participantes Participantes;
 
-Serie *criaNoSerie();
-void insere_Serie(Serie **raiz, int codigo, char titulo[], int numTemp);
+typedef struct dadoSerie DadoSeries;
+typedef struct arvoreSerie ArvoreSerie;
 
-Temporada *criarTemporada();
-void insere_Temporada(Temporada **raiz,int numTemporada, char titulo[], int quantEp, char an);
-
-
-Serie *busca_Serie(Serie **serie, int codigo);
-Serie *endereco(Serie *raiz);
-
-Participantes *criar_Participantes();
-Participantes *inserir_Participante(Participantes *lista,char nomeDoArtista,char nomeParticipante,char descricao );
+typedef struct dadoTemporada DadoTemporada;
+typedef struct arvoreTemporada ArvoreTemporada;
 
 
-void inserirTemporadaAserie(Serie *serie, Temporada *temporada);
-void listarParticipante(Participantes *lista);
-void listarTemporada(Temporada *raiz);
+ArvoreSerie *criarArvoreSerie();
+ArvoreTemporada *criaAvoreTemporada();
 
-void imprime_Serie(Serie *raiz);
-int imprime_Serie_Por_Codigo(Serie *raiz, int codigo);
-void imprime_Todos_Personagens(Serie *raiz, int codigo);
-void imprime_Personagens_Determinada_Temp(Serie *raiz, int codigo);
-void remover_serie(Serie **raiz, int codigo);
-void busca_folha(Serie **filho_1, Serie *filho_2);
+DadoSeries lerDadosSerie();
 
+Participantes *criaListaParticipante();
+Participantes *insereParticipante(Participantes *lista, int id, char nomeDoArtista[], char nomeDoPersongem[], char descricao[]);
+void imprimeParticipante(Participantes *lista);
+Participantes *buscaParticipantes(Participantes *lista, int id);
+
+void inserirSeries(ArvoreSerie **raiz, int codigo, int numeroTemporada, char titulo[]);
+
+void imprimeSeries(DadoSeries s);
+void imprimeArvoreSeries(ArvoreSerie *raiz);
+void imprimeSeriesPeloCodigo(ArvoreSerie *raiz, int codigo);
+ArvoreSerie *BuscarSeries( ArvoreSerie *raizS, int codigo);
+
+void insereTemporada(ArvoreTemporada **raiz, int numTem, char tituloTemp[], int quantEpisodio, char ano[]);
+void imprimeArvoreTemporada(ArvoreTemporada *raiz);
+
+ArvoreSerie *insereTemporadaNaSerie(ArvoreSerie *raizS, ArvoreTemporada *raizT, int codigo);
+
+void imprimeTemporada(DadoTemporada temporada);
+
+void imprimirTemporada(ArvoreSerie *raiz);
+void imprimirTemporadaDeUmaSerie(ArvoreSerie *raiz, int codigo, int numTemporada);
