@@ -1,55 +1,84 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "arvBin.h"
-#include <string.h>
+
+
+
 
 int main(){
-    Serie *serie = NULL, *raizS = NULL;
-    Temporada *temporada = NULL, *raizT = NULL;
-    Participantes *particpante = NULL;
 
+    int opc,id, codigo, numTemporadas, codigoSerie;
+    int numTemp,quantEpisodio;
+    char titulo[50], ano[50], tituloTemoporada[50], nomeDoArtista[50],  nomeDoPersongem[50],  descricao[50];
+    ArvoreSerie *raizS = criarArvoreSerie();
+    ArvoreTemporada  *raizT = criaAvoreTemporada();
+    Participantes *listaParticipante =criaListaParticipante();
 
-    int opc, codigo,numTemp,numTempo, quantEp;
-    char titulo[50],ano[50],nomeArtista[50], nomeParticipante[50], descricao[50];
 
     do{
-        printf( "1 - Cadastrar Série \n "
-                "2 - Cadastrar Temporada \n"
-                "3 - Inserir Participante\n"
-                "4 - Imprimir os dados de todas as temporadas de uma série \n "
-                "5 - Imprimir todos os personagens de uma determinada temporada \n"
-                "6 - Imprimir o nome de todos os artistas que interpretaram um determinado personagem em todas as emporadas de uma dada série \n"
-        );
+        printf("1 - Inserir Serie\n2 - Imprimir Series por código\n3 - Inserir Temporada\n4 - Imprimir Temporada\n5 - Inserir Participantes\n6 - Imprimir Participantes\n7 - imprimir todas as series\n");
         scanf("%d", &opc);
         switch (opc)
         {
-        case 1:
-            codigo = 10;
-            strcpy(titulo, "Sem dinheiro");
-            numTemp = 3;
-            serie = criaNoSerie(codigo, titulo, numTemp);
-            serie = (raizS, serie);
-            break;
-        case 2:
-            numTempo = 2;
-            strcpy(titulo, "sei la");
-            quantEp = 4;
-            strcpy(ano, "2023");
-            temporada = criarTemporada(numTempo, titulo,quantEp, ano);
-            temporada = (raizT, temporada);
-            inserirTemporadaAserie(serie, temporada);
-            break;
-        case 3:
-            break;
-        case 4:
-            listarTemporada(raizT);
-            break;
- 
-        
-        default:
-            break;
+            case 1:
+                printf("Codigo:");
+                scanf("%d", &codigo);
+                printf("Numero da serie: \n");
+                scanf("%d", &numTemporadas);
+                printf("Titulo da serie:");
+                scanf("%s", titulo);
+                inserirSeries(&raizS, codigo, numTemporadas, titulo);
+                break;
+            case 2:
+                printf("Insira o codigo da series: \n");
+                scanf("%d", &codigoSerie);
+                imprimeSeriesPeloCodigo(raizS, codigoSerie);
+                break;
+            case 3:
+                imprimeArvoreSeries(raizS);
+                printf("Insira o codigo da serie que deseja cadastrar temporada: \n");
+                scanf("%d", &codigoSerie);
+                printf("Número da temporada: ");
+                scanf("%d", &numTemp);
+                printf("Quantidade de episódios: ");
+                scanf("%d", &quantEpisodio);
+                printf("Título da temporada: ");
+                scanf("%s", tituloTemoporada);
+                printf("Ano da temporada: ");
+                scanf("%s", ano);
+                insereTemporada(&raizT, numTemp, tituloTemoporada, quantEpisodio, ano);
+                raizS = insereTemporadaNaSerie(raizS, raizT, codigoSerie);
+                if(raizS != NULL){
+                    printf("Temporada Inserida com sucesso! \n");
+                }else{
+                    printf("Não foi possivel inserir a temporada! \n");
+                }
+                break;
+            case 4:
+                imprimeArvoreTemporada(raizT);
+                break;
+            case 5:
+                printf("Voce escolheu inserir participante: \n");
+                printf("Id do artista: \n");
+                scanf("%d", &id);
+                printf("Nome do artista:\n");
+                scanf("%s", nomeDoArtista);
+                printf("Nome do Personagem: \n");
+                scanf("%s", nomeDoPersongem);
+                printf("Descricao: \n");
+                scanf("%s", descricao);
+                listaParticipante = insereParticipante(listaParticipante, id, nomeDoArtista, nomeDoPersongem, descricao);
+                break;
+            case 6:
+                imprimeParticipante(listaParticipante);
+                break;
+            case 7:
+                imprimeArvoreSeries(raizS);
+                break;
+            default:
+                break;
         }
-
     }while(opc != 0);
+
     return 0;
 }
