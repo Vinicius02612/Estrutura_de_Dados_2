@@ -262,7 +262,7 @@ void imprime_Serie_Por_Codigo(Serie *raiz, int codigo){
       }
 }
 
-Temporada criaNoTemp(int cod,int numTemp, char titulo[], int quantidade_Ep, char ano, Part *list){
+Temporada criaNoTemp(int cod,int numTemp, char titulo[], int quantidade_Ep, char ano, Participantes *list){
       Temporada *new = (Temporada*) malloc(sizeof(Temporada));
       new->codigo = cod;
       new->numTem = numTemp;
@@ -468,6 +468,77 @@ void imprime_temporada_por_codigo(Temporada *temporada, int codigo){
             {
                   imprime_temporada_por_codigo(temporada->dir, codigo);
             }
+      }
+}
+
+Participantes *criaListaParticipante(){
+    /* Participantes *lista = (Participantes*)malloc(sizeof(Participantes));
+    if(lista != NULL)
+        return lista; */
+    return NULL;
+}
+// inserir participante da temporada
+Participantes *insereParticipante(Participantes *lista, int id, char nomeDoArtista[], char nomeDoPersongem[], char descricao[]){
+    Participantes *auxParicipante = (Participantes*)malloc(sizeof(Participantes));
+    if(auxParicipante != NULL){
+        auxParicipante->codigo = id;
+        strcpy(auxParicipante->nome_Artista, nomeDoArtista);
+        strcpy(auxParicipante->nome_Personagem, nomeDoPersongem);
+        strcpy(auxParicipante->descricao, descricao);
+
+        if(lista == NULL){ // caso a lista esteja vazia e é o primeiro elemento a ser inserido
+            auxParicipante->prox = NULL;
+            lista = auxParicipante;
+        }else{
+
+            Participantes *ant, *atual = (Participantes*)malloc(sizeof(Participantes));
+            while(atual != NULL && strcmp(atual->nome_Artista, lista->nome_Artista) < 0  ){
+                ant = atual;
+                atual = atual->prox;
+            }
+            if(atual == NULL){
+                auxParicipante->prox = lista;
+                lista = auxParicipante;
+            }else{
+                auxParicipante->prox = atual;
+                ant->prox = auxParicipante;
+            }
+        }
+        
+    }
+
+    return lista;
+}
+
+Participantes *buscaParticipantes(Participantes *lista, int id){
+    Participantes *aux = lista;
+    while (aux != NULL)
+    {
+        if(aux->codigo == id){
+            return aux;
+        }
+        aux = aux->prox;
+    }
+}
+
+void imprimeParticipante(Participantes *lista){
+    Participantes *aux = lista;
+    if(lista != NULL){
+        while (aux != NULL){
+            printf("Nome do artista: %s\nNome do Personagem: %s\nDescricao: %s\n", aux->nome_Artista, aux->nome_Personagem, aux->descricao);
+            aux = aux->prox;
+        }
+    }
+}
+
+void imprimir_participantes_determinada_temp(Temporada *temp){
+      Participantes *atual = temp->participantes;
+      
+      printf("\nParticipantes da Temporada %d:\n", temp->numTem);
+
+      while (atual != NULL){
+      {
+            imprimeParticipante(atual);
       }
 }
 

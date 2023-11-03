@@ -20,9 +20,12 @@ typedef struct temporada{
 
 typedef struct participantes
 {
-      char nome[50];
-      Part *prox; 
-}Part;
+      int codigo;
+      char nome_Artista[50];
+      char nome_Personagem[50];
+      char descricao[100];
+      Part *prox;
+}Participantes;
 
 Serie *criaNoSerie(int codigo, char titulo[], int numTemp);
 Serie *busca_Serie_Codigo(Serie **serie, int codigo);
@@ -54,3 +57,8 @@ void rotacao_Direita_temp(Temporada **no);
 void rotacao_Esquerda_temp(Temporada **no);
 
 void imprime_temporada(Temporada *temp);
+
+Participantes *criaListaParticipante();
+Participantes *insereParticipante(Participantes *lista, int cod, char nomeDoArtista[], char nomeDoPersongem[], char descricao[]);
+void imprimeParticipante(Participantes *lista);
+Participantes *buscaParticipantes(Participantes *lista, int id);
