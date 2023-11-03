@@ -13,8 +13,7 @@ int main(){
     ArvoreSerie *raizS = criarArvoreSerie();
     ArvoreTemporada  *raizT = criaAvoreTemporada();
     Participantes *listaParticipante =criaListaParticipante();
-
-
+    
     do{
         printf("1 - Inserir Serie\n2 - Imprimir Series por código\n3 - Inserir Temporada\n4 - Imprimir Temporada\n5 - Inserir Participantes\n6 - Imprimir Participantes\n7 - imprimir todas as series\n");
         scanf("%d", &opc);
