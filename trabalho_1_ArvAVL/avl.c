@@ -231,7 +231,7 @@ void remover_serie(Serie **raiz, int codigo){
       }
 }
 
-void imprime(Serie *raiz){
+void imprime_Serie(Serie *raiz){
        printf("\nDados da série:\nCodigo: %d\nTitulo: %s\nNumero de temporadas: %d\n\n", raiz->codigo, raiz->titulo, raiz->numTemp);
 }
 
@@ -249,10 +249,10 @@ void imprime_Serie_Por_Codigo(Serie *raiz, int codigo){
       {
             if (raiz->codigo == codigo)
             {
-                  imprime(raiz);
+                  imprime_Serie(raiz);
             }else
             {
-                  if (raiz->esq == codigo)
+                  if (raiz->esq < codigo)
                   {
                         imprime_Serie_Por_Codigo(raiz->esq, codigo);
                   }else{
@@ -441,3 +441,33 @@ void remover_temporada(Temporada **raiz, int codigo){
             }      
       }
 }
+
+void imprime_temporada(Temporada *temp){
+      printf("\n\tNumero da temporada: %d\n\tTitulo: %s\n\tQuantidade de episódios: %d\n\tAno: %s\n", temp->numTem, temp->titulo, temp->quantEp, temp->ano);
+}
+void imprime_todas_temp(Temporada *temporada){
+      if (temporada != NULL)
+      {
+            imprime_temporada(temporada->esq);
+            imprime_temporada(temporada);
+            imprime_temporada(temporada->dir);
+      }
+}
+
+
+void imprime_temporada_por_codigo(Temporada *temporada, int codigo){
+      if (temporada != NULL)
+      {
+            if (temporada->codigo == codigo)
+            {
+                  imprime_temporada(temporada);
+            }else if (temporada->esq < codigo)
+            {
+                  imprime_Serie_Por_Codigo(temporada->esq, codigo);
+            }else
+            {
+                  imprime_temporada_por_codigo(temporada->dir, codigo);
+            }
+      }
+}
+

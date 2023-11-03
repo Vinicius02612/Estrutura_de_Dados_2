@@ -30,6 +30,7 @@ void *busca_Serie_remove(Serie **serie, int codigo, int codigo_temp);
 void busca_folha_Serie(Serie **ultimo, Serie *no_Filho);
 void remover_serie(Serie **raiz, int codigo);
 Serie *endereco(Serie *raiz);
+
 void insere_Serie(Serie **raiz, Serie *serie);
 void imprime_todas_Series(Serie *raiz);
 int calcula_Altura(Serie *no);
@@ -37,8 +38,6 @@ void atualizar_Altura(Serie *no);
 int fator_Balanciamento(Serie *no);
 void rotacao_Direita(Serie **no);
 void rotacao_Esquerda(Serie **no);
-
-void imprime(Serie *raiz);
 
 void imprime_Serie_Por_Codigo(Serie *raiz, int codigo);
 void imprime_Todos_Personagens(Serie *raiz, int codigo);
@@ -53,3 +52,5 @@ void atualizar_Altura_temp(Temporada *no);
 int fator_Balanciamento_temp(Temporada *no);
 void rotacao_Direita_temp(Temporada **no);
 void rotacao_Esquerda_temp(Temporada **no);
+
+void imprime_temporada(Temporada *temp);
