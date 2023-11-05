@@ -3,6 +3,38 @@
 #include <string.h>
 #include "avl.h"
 
+typedef struct serie{
+      int codigo;
+      char titulo[50];
+      int numTemp;
+      int alt;
+      Temporada *arvTemp;
+      Serie *esq, *dir;
+}Serie;
+//código, título, número de temporadas
+
+typedef struct temporada{
+      int codigo;
+      int numTem;
+      char titulo[50];
+      int quantEp;
+      char ano[50];
+      int alt;
+      Participantes *participantes;
+      Temporada *esq, *dir;
+}Temporada;
+//número da temporada, título, quantidade de episódios, ano, endereço para ula lista simples  de participantes.
+
+typedef struct participantes
+{
+      int codigo;
+      char nome_Artista[50];
+      char nome_Personagem[50];
+      char descricao[100];
+      Participantes *prox;
+}Participantes;
+
+
 Serie *criaNoSerie(int codigo, char titulo[], int numTemp){
 
       Serie *new = (Serie *) malloc(sizeof(Serie));
@@ -16,9 +48,9 @@ Serie *criaNoSerie(int codigo, char titulo[], int numTemp){
       return new;
 }
 
-int calcula_Altura(Serie *no){
+int  calcula_Altura(Serie *no){ //
       int i = -1;
-      if (no != -1)
+      if (no != NULL)
       {
             i = no->alt;
       }
@@ -91,7 +123,7 @@ void insere_Serie(Serie **raiz, Serie *serie){
             {
                   rotacao_Esquerda(&((*raiz)->esq));
             }
-            rotacao_Direita(*raiz);
+            rotacao_Direita(&(*raiz));
       }else if (fator_de_Balanceamento == -2)
       {
              int fator_balanceamento_dir;
@@ -101,7 +133,7 @@ void insere_Serie(Serie **raiz, Serie *serie){
              {
                   rotacao_Direita(&((*raiz)->dir));
              }
-             rotacao_Esquerda(*raiz);
+             rotacao_Esquerda(&(*raiz));
       }
       atualizar_Altura(*raiz);
 }
@@ -124,7 +156,7 @@ void *busca_Serie_remove(Serie **serie, int codigo, int codigo_temp){
 
 Serie *busca_Serie_Codigo(Serie **serie, int codigo){
 
-      Serie **idEncontrado;
+      Serie *idEncontrado;
       if((*serie) != NULL){
             if ((*serie)->codigo > codigo)
             {
@@ -136,12 +168,12 @@ Serie *busca_Serie_Codigo(Serie **serie, int codigo){
             }
             else
             {
-                  idEncontrado = serie;
+                  idEncontrado = *serie;
             }
       }
       else
       {
-            idEncontrado = serie;
+            idEncontrado = *serie;
       }    
 }
 
@@ -193,7 +225,7 @@ void remover_serie(Serie **raiz, int codigo){
                               Serie *id_filho_1;
                               aux = *raiz;
                               id_filho_1 = (*raiz)->esq;
-                              busca_folha_Serie(&(*raiz)->esq, &(*raiz)->dir);
+                              busca_folha_Serie(&(*raiz)->esq, (*raiz)->dir);
                               *raiz = id_filho_1;
                               free(aux);
                               aux = NULL;
@@ -238,9 +270,9 @@ void imprime_Serie(Serie *raiz){
 void imprime_todas_Series(Serie *raiz){
       if (raiz != NULL)
       {
-            imprime_Serie(raiz->esq);
-            imprime(raiz);
-            imprime_Serie(raiz->dir);
+            imprime_todas_Series(raiz->esq);
+            imprime_Serie(raiz);
+            imprime_todas_Series(raiz->dir);
       }
 }
 
@@ -252,7 +284,7 @@ void imprime_Serie_Por_Codigo(Serie *raiz, int codigo){
                   imprime_Serie(raiz);
             }else
             {
-                  if (raiz->esq < codigo)
+                  if (raiz->codigo < codigo)
                   {
                         imprime_Serie_Por_Codigo(raiz->esq, codigo);
                   }else{
@@ -262,21 +294,22 @@ void imprime_Serie_Por_Codigo(Serie *raiz, int codigo){
       }
 }
 
-Temporada criaNoTemp(int cod,int numTemp, char titulo[], int quantidade_Ep, char ano, Participantes *list){
+Temporada *criaNoTemp(int cod,int numTemp, char titulo[], int quantidade_Ep, char ano[], Participantes *list){
       Temporada *new = (Temporada*) malloc(sizeof(Temporada));
       new->codigo = cod;
       new->numTem = numTemp;
-      new->participantes = *list;
-      new->ano = ano;
+      new->participantes = list;
+      strcpy(new->ano, ano);
       strcpy(new->titulo, titulo);
       new->quantEp = quantidade_Ep;
-      new->esq = new->dir = new->alt = NULL;
-      return *new;
+      new->esq = new->dir =  NULL;
+      new->alt = -1;
+      return new;
 }
 
 int calcula_Altura_temp(Temporada *no){
       int i = -1;
-      if (no != -1)
+      if (no != NULL)
       {
             i = no->alt;
       }
@@ -348,7 +381,7 @@ void insere_Temp(Temporada **raiz, Temporada *temp){
             {
                   rotacao_Esquerda_temp(&((*raiz)->esq));
             }
-            rotacao_Direita_temp(*raiz);
+            rotacao_Direita_temp(&(*raiz));
       }else if (fator_de_Balanceamento == -2)
       {
              int fator_balanceamento_dir;
@@ -358,7 +391,7 @@ void insere_Temp(Temporada **raiz, Temporada *temp){
              {
                   rotacao_Direita_temp(&((*raiz)->dir));
              }
-             rotacao_Esquerda_temp(*raiz);
+             rotacao_Esquerda_temp(&(*raiz));
       }
       atualizar_Altura_temp(*raiz);
 }
@@ -366,7 +399,7 @@ void insere_Temp(Temporada **raiz, Temporada *temp){
 void busca_folha_temp(Temporada **filho_1, Temporada *filho_2){
       if (*filho_1)
       {
-            busca_folha_Serie(&((*filho_1)->dir), filho_2);
+            busca_folha_temp(&((*filho_1)->dir), filho_2);
       }else
       {
             (*filho_1) = filho_2;
@@ -448,9 +481,9 @@ void imprime_temporada(Temporada *temp){
 void imprime_todas_temp(Temporada *temporada){
       if (temporada != NULL)
       {
-            imprime_temporada(temporada->esq);
+            imprime_todas_temp(temporada->esq);
             imprime_temporada(temporada);
-            imprime_temporada(temporada->dir);
+            imprime_todas_temp(temporada->dir);
       }
 }
 
@@ -461,9 +494,9 @@ void imprime_temporada_por_codigo(Temporada *temporada, int codigo){
             if (temporada->codigo == codigo)
             {
                   imprime_temporada(temporada);
-            }else if (temporada->esq < codigo)
+            }else if (temporada->codigo < codigo)
             {
-                  imprime_Serie_Por_Codigo(temporada->esq, codigo);
+                  imprime_temporada_por_codigo(temporada->esq, codigo);
             }else
             {
                   imprime_temporada_por_codigo(temporada->dir, codigo);
@@ -472,44 +505,35 @@ void imprime_temporada_por_codigo(Temporada *temporada, int codigo){
 }
 
 Participantes *criaListaParticipante(){
-    /* Participantes *lista = (Participantes*)malloc(sizeof(Participantes));
-    if(lista != NULL)
-        return lista; */
     return NULL;
 }
 // inserir participante da temporada
 Participantes *insereParticipante(Participantes *lista, int id, char nomeDoArtista[], char nomeDoPersongem[], char descricao[]){
-    Participantes *auxParicipante = (Participantes*)malloc(sizeof(Participantes));
-    if(auxParicipante != NULL){
-        auxParicipante->codigo = id;
-        strcpy(auxParicipante->nome_Artista, nomeDoArtista);
-        strcpy(auxParicipante->nome_Personagem, nomeDoPersongem);
-        strcpy(auxParicipante->descricao, descricao);
 
-        if(lista == NULL){ // caso a lista esteja vazia e é o primeiro elemento a ser inserido
-            auxParicipante->prox = NULL;
-            lista = auxParicipante;
-        }else{
+      Participantes *auxParicipante = (Participantes*)malloc(sizeof(Participantes));
+      if(auxParicipante != NULL){
+            auxParicipante->codigo = id;
+            strcpy(auxParicipante->nome_Artista, nomeDoArtista);
+            strcpy(auxParicipante->nome_Personagem, nomeDoPersongem);
+            strcpy(auxParicipante->descricao, descricao);
 
-            Participantes *ant, *atual = (Participantes*)malloc(sizeof(Participantes));
-            while(atual != NULL && strcmp(atual->nome_Artista, lista->nome_Artista) < 0  ){
-                ant = atual;
-                atual = atual->prox;
-            }
-            if(atual == NULL){
-                auxParicipante->prox = lista;
-                lista = auxParicipante;
+            if(lista == NULL){ // caso a lista esteja vazia e é o primeiro elemento a ser inserido
+                  auxParicipante->prox = NULL;
+                  lista = auxParicipante;
             }else{
-                auxParicipante->prox = atual;
-                ant->prox = auxParicipante;
+
+                  Participantes *aux = lista;
+                  while(aux != NULL && strcmp(auxParicipante->nome_Artista, aux->nome_Artista) < 0  )// garanto que a seja inserido por ordem
+                  aux = aux->prox;
+                  
+                  auxParicipante->prox = aux->prox;
+                  aux->prox = auxParicipante;
             }
-        }
-        
-    }
-
+      }          
     return lista;
-}
 
+}
+    
 Participantes *buscaParticipantes(Participantes *lista, int id){
     Participantes *aux = lista;
     while (aux != NULL)
@@ -531,14 +555,5 @@ void imprimeParticipante(Participantes *lista){
     }
 }
 
-void imprimir_participantes_determinada_temp(Temporada *temp){
-      Participantes *atual = temp->participantes;
-      
-      printf("\nParticipantes da Temporada %d:\n", temp->numTem);
 
-      while (atual != NULL){
-      {
-            imprimeParticipante(atual);
-      }
-}
 

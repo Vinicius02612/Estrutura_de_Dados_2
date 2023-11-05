@@ -221,3 +221,15 @@ void imprimeArvoreTemporada(ArvoreTemporada *raiz){
         printf("\n");
     }
 }
+/* 
+
+void imprimir_participantes_determinada_temp(ArvoreTemporada *raiz){
+      Participantes *atual = raiz->temporada;
+      
+      printf("\nParticipantes da Temporada %d:\n", temp->numTem);
+
+      while (atual != NULL){
+      {
+            imprimeParticipante(atual);
+      }
+} */
