@@ -49,6 +49,7 @@ int main(){
                 scanf(" %s", ano);
                 DadoTemporada  = criaNoTemp(codigoSerie,numTemp, titulo, quantEpisodio, ano, listaParticipante );
                 insere_Temp(&raizT, DadoTemporada);
+                inserirTemporada(raizS, raizT);
                 break;
             case 4:
                 imprime_temporada(raizT);

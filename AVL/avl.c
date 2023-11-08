@@ -45,7 +45,7 @@ Serie *criaNoSerie(int codigo, char titulo[], int numTemp){
       new->alt = 0;
       new->esq = NULL;
       new->dir = NULL;
-      return new;
+      return  new ;
 }
 
 int  calcula_Altura(Serie *no){ //
@@ -199,6 +199,37 @@ Serie *endereco(Serie *raiz){
       }
       return aux;
 }
+
+void inserirTemporada(Serie* serie, Temporada* temporada) {
+    // Verifica se a série e a temporada são válidas
+    if (serie == NULL || temporada == NULL) {
+        printf("Erro: Serie ou Temporada invalida.\n");
+        return;
+    }
+
+    // Verifica se a temporada já está na árvore da série
+    if (temporada->codigo < serie->arvTemp->codigo) {
+        // Insere à esquerda
+        if (serie->arvTemp->esq == NULL) {
+            serie->arvTemp->esq = temporada;
+        } else {
+            inserirTemporada(serie->arvTemp->esq, temporada);
+        }
+    } else if (temporada->codigo > serie->arvTemp->codigo) {
+        // Insere à direita
+        if (serie->arvTemp->dir == NULL) {
+            serie->arvTemp->dir = temporada;
+        } else {
+            inserirTemporada(serie->arvTemp->esq, temporada);
+        }
+    } else {
+        // Temporada com código igual já existe na árvore
+        printf("Erro: Temporada com codigo %d ja existe na serie.\n", temporada->codigo);
+        return;
+    }
+}
+
+
 
 void remover_serie(Serie **raiz, int codigo){
       if ((*raiz) != NULL)

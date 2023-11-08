@@ -20,7 +20,7 @@ void atualizar_Altura(Serie *no);
 int fator_Balanciamento(Serie *no);
 void rotacao_Direita(Serie **no);
 void rotacao_Esquerda(Serie **no);
-
+void inserirTemporada(Serie* serie, Temporada* temporada);
 void imprime_Serie_Por_Codigo(Serie *raiz, int codigo);
 void imprime_Todos_Personagens(Serie *raiz, int codigo);
 void imprime_Personagens_Determinada_Temp(Serie *raiz, int codigo);

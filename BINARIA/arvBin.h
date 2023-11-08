@@ -23,26 +23,27 @@ typedef struct arvoreTemporada ArvoreTemporada;
 ArvoreSerie *criarArvoreSerie();
 ArvoreTemporada *criaAvoreTemporada();
 
-DadoSeries lerDadosSerie();
+ArvoreSerie *lerDadosSerie();
+ArvoreTemporada *lerDadoTemporada();
 
 Participantes *criaListaParticipante();
-Participantes *insereParticipante(Participantes *lista, int id, char nomeDoArtista[], char nomeDoPersongem[], char descricao[]);
+Participantes *insereParticipante(Participantes *lista, Participantes *dadoParticipante);
 void imprimeParticipante(Participantes *lista);
-Participantes *buscaParticipantes(Participantes *lista, int id);
+void buscaParticipantes(Participantes *lista,char nomePersonagem[]);
+void imprimirPersonagensDeUmaTemporada(ArvoreSerie *raizS, int codigo, int NumeroTemporada );
+void imprimirNomeDeUmArtista(ArvoreSerie *raizS, char nomePersonagem[]);
 
-void inserirSeries(ArvoreSerie **raiz, int codigo, int numeroTemporada, char titulo[]);
-
-void imprimeSeries(DadoSeries s);
+void inserirSeries(ArvoreSerie **raiz, ArvoreSerie *Dado);
+void imprimeSeries(ArvoreSerie s);
 void imprimeArvoreSeries(ArvoreSerie *raiz);
 void imprimeSeriesPeloCodigo(ArvoreSerie *raiz, int codigo);
 ArvoreSerie *BuscarSeries( ArvoreSerie *raizS, int codigo);
 
-void insereTemporada(ArvoreTemporada **raiz, int numTem, char tituloTemp[], int quantEpisodio, char ano[]);
+ArvoreTemporada *insereTemporada(ArvoreTemporada **raiz, ArvoreTemporada *Dado);
 void imprimeArvoreTemporada(ArvoreTemporada *raiz);
 
-ArvoreSerie *insereTemporadaNaSerie(ArvoreSerie *raizS, ArvoreTemporada *raizT, int codigo);
-
-void imprimeTemporada(DadoTemporada temporada);
+void imprimeTemporadaDeUmaSerie(ArvoreSerie *raizS, int codigo);
+void imprimeTemporada(ArvoreTemporada temporada);
 
 void imprimirTemporada(ArvoreSerie *raiz);
 void imprimirTemporadaDeUmaSerie(ArvoreSerie *raiz, int codigo, int numTemporada);

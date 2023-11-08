@@ -13,61 +13,46 @@ int main(){
     ArvoreSerie *raizS = criarArvoreSerie();
     ArvoreTemporada  *raizT = criaAvoreTemporada();
     Participantes *listaParticipante =criaListaParticipante();
+    
+    ArvoreSerie *s;
+    ArvoreSerie *Dado =  NULL;
+    ArvoreTemporada *DadoTemp=  NULL;
 
 
     do{
-        printf("1 - Inserir Serie\n2 - Imprimir Series por código\n3 - Inserir Temporada\n4 - Imprimir Temporada\n5 - Inserir Participantes\n6 - Imprimir Participantes\n7 - imprimir todas as series\n");
+        
+        printf("1  Inserir Serie\n"
+                "2 Imprimir em ordem pelo codigo da serie: o titulo, o numero de temporadas.\n"
+                "3 Imprimir os dados de todas as temporadas de uma serie, cujo o usuario informe o codigo da serie.\n"
+                "4 Imprimir  todos  os  personagens  de  uma  determinada  temporada  de  uma  dada  serie,  cujo  o  usuario informe o codigo da serie e o numero da temporada.\n"
+                "5 Imprimir  o  nome  de  todos  os  artistas  que  interpretaram  um  determinado  personagem  em  todas  as temporadas de uma dada serie, cujo o usuario informe o codigo da serie\n"
+            );
         scanf("%d", &opc);
         switch (opc)
         {
             case 1:
-                printf("Codigo:");
-                scanf("%d", &codigo);
-                printf("Numero da serie: \n");
-                scanf("%d", &numTemporadas);
-                printf("Titulo da serie:");
-                scanf("%s", titulo);
-                inserirSeries(&raizS, codigo, numTemporadas, titulo);
+                Dado = lerDadosSerie();
+                inserirSeries(&raizS, Dado);
                 break;
             case 2:
-                printf("Insira o codigo da series: \n");
-                scanf("%d", &codigoSerie);
-                imprimeSeriesPeloCodigo(raizS, codigoSerie);
+                imprimeArvoreSeries(raizS);
                 break;
             case 3:
-                imprimeArvoreSeries(raizS);
-                printf("Insira o codigo da serie que deseja cadastrar temporada: \n");
+                printf("Informe o codigo da serie: \n");
                 scanf("%d", &codigoSerie);
-                printf("Número da temporada: ");
-                scanf("%d", &numTemp);
-                printf("Quantidade de episódios: ");
-                scanf("%d", &quantEpisodio);
-                printf("Título da temporada: ");
-                scanf("%s", tituloTemoporada);
-                printf("Ano da temporada: ");
-                scanf("%s", ano);
-                insereTemporada(&raizT, numTemp, tituloTemoporada, quantEpisodio, ano);
-                raizS = insereTemporadaNaSerie(raizS, raizT, codigoSerie);
-                if(raizS != NULL){
-                    printf("Temporada Inserida com sucesso! \n");
-                }else{
-                    printf("Não foi possivel inserir a temporada! \n");
-                }
+                imprimeTemporadaDeUmaSerie(raizS, codigoSerie);
                 break;
             case 4:
-                imprimeArvoreTemporada(raizT);
+                printf("Informe o codigo da serie: \n");
+                scanf("%d", &codigoSerie);
+                printf("Numero da temporada:\n");
+                scanf("%d", &numTemp);
+                imprimirPersonagensDeUmaTemporada(raizS, codigoSerie, numTemp);
                 break;
             case 5:
-                printf("Voce escolheu inserir participante: \n");
-                printf("Id do artista: \n");
-                scanf("%d", &id);
-                printf("Nome do artista:\n");
-                scanf("%s", nomeDoArtista);
-                printf("Nome do Personagem: \n");
+                printf("Digite o nome do personagem: \n");
                 scanf("%s", nomeDoPersongem);
-                printf("Descricao: \n");
-                scanf("%s", descricao);
-                listaParticipante = insereParticipante(listaParticipante, id, nomeDoArtista, nomeDoPersongem, descricao);
+                imprimirNomeDeUmArtista(raizS, nomeDoPersongem);
                 break;
             case 6:
                 imprimeParticipante(listaParticipante);
@@ -75,10 +60,55 @@ int main(){
             case 7:
                 imprimeArvoreSeries(raizS);
                 break;
+            case 8:
+                
+                break;
             default:
                 break;
-        }
+        }  
     }while(opc != 0);
+   
 
     return 0;
 }
+
+/* 
+// Função auxiliar para inserir uma temporada na árvore de uma série, mantendo a ordem pelo número da temporada
+void inserirTemporadaAux(Temporada *raiz, Temporada *t, Temporada **pai) {
+    if (raiz == NULL) { // Se a árvore estiver vazia ou chegar a uma folha
+        *pai = t; // Fazer o pai apontar para a temporada
+    } else if (t->numero < raiz->numero) { // Se o número da temporada for menor que o da raiz
+        inserirTemporadaAux(raiz->esq, t, &(raiz->esq)); // Inserir na subárvore esquerda
+    } else if (t->numero > raiz->numero) { // Se o número da temporada for maior que o da raiz
+        inserirTemporadaAux(raiz->dir, t, &(raiz->dir)); // Inserir na subárvore direita
+    } else { // Se o número da temporada for igual ao da raiz
+        printf("Temporada ja existe na serie.\n");
+        //return;
+    }
+}
+
+// Função para inserir uma temporada na árvore de uma série, mantendo a ordem pelo número da temporada
+void inserirTemporada(Serie *s, Temporada *t) {
+    if (s == NULL) { // Verificar se a série é válida
+        printf("Serie invalida.\n");
+        //return;
+    }
+    if (t == NULL) { // Verificar se a temporada é válida
+        printf("Temporada invalida.\n");
+        //return;
+    }
+    inserirTemporadaAux(s->temporadas, t, &(s->temporadas)); // Inserir a temporada na árvore de temporadas da série
+}
+
+
+
+
+
+
+
+
+
+
+
+
+ */
