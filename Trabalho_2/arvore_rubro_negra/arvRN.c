@@ -25,12 +25,17 @@ typedef struct {
     Album *esq, *dir;
 } Album;
 
-typedef struct {
+typedef struct Musica {
     char titulo[100];
-    int duracao; 
-    Musica *proximo;
-    Musica *anterior;
+    int duracao;
+    struct Musica* proximo;
+    struct Musica* anterior;
 } Musica;
+
+typedef struct {
+    Musica* inicio;
+    Musica* fim;
+} ListaDupla;
 
 int cor_artista(Artista *raiz){
       int cor;
@@ -212,4 +217,71 @@ Artista* remove_NO_artista(struct Artista** raiz, char nome_artista[]){
       }
       balanceia_artista(*raiz);
       return removeu;
+}
+
+
+
+
+
+
+
+
+
+
+
+void inicializarLista(ListaDupla* lista) {
+    lista->inicio = NULL;
+    lista->fim = NULL;
+}
+
+// Função para adicionar uma música no final da lista
+void adicionarMusica(ListaDupla* lista, Musica novaMusica) {
+    Musica* novoNo = (Musica*)malloc(sizeof(Musica));
+    if (novoNo == NULL) {
+        fprintf(stderr, "Erro ao alocar memória\n");
+        exit(EXIT_FAILURE);
+    }
+
+    novoNo->proximo = NULL;
+    novoNo->anterior = NULL;
+    novoNo->duracao = novaMusica.duracao;
+    strcpy(novoNo->titulo, novaMusica.titulo);
+
+    if (lista->inicio == NULL) {
+        // Lista vazia
+        lista->inicio = novoNo;
+        lista->fim = novoNo;
+    } else {
+        // Adiciona o novo nó no final da lista
+        novoNo->anterior = lista->fim;
+        lista->fim->proximo = novoNo;
+        lista->fim = novoNo;
+    }
+}
+
+// Função para imprimir todas as músicas na lista
+void imprimirLista(ListaDupla lista) {
+    if (lista.inicio == NULL) {
+        printf("Lista vazia.\n");
+        return;
+    }
+
+    Musica* atual = lista.inicio;
+    while (atual != NULL) {
+        printf("Título: %s, Duração: %d\n", atual->titulo, atual->duracao);
+        atual = atual->proximo;
+    }
+}
+
+// Função para liberar a memória alocada para a lista
+void liberarLista(ListaDupla* lista) {
+    Musica* atual = lista->inicio;
+    while (atual != NULL) {
+        Musica* proximo = atual->proximo;
+        free(atual);
+        atual = proximo;
+    }
+
+    lista->inicio = NULL;
+    lista->fim = NULL;
 }

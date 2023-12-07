@@ -17,3 +17,16 @@ Artista move_esq_red(Artista *raiz);
 Artista move_dir_red(Artista *raiz);
 Artista remove_menor(Artista *raiz);
 Artista *procuraMenor(Artista *atual);
+
+
+
+
+
+
+
+
+// -----------------REFERENTE A ARTISTA-----------------
+void inicializarLista(ListaDupla *lista);
+void adicionarMusica(ListaDupla *lista, Musica novaMusica);
+void imprimirLista(ListaDupla lista);
+void liberarLista(ListaDupla *lista);
