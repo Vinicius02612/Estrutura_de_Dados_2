@@ -9,7 +9,7 @@ int main(){
 
     int opc,id, codigo, numTemporadas, codigoSerie;
     int numTemp,quantEpisodio;
-    char titulo[50], ano[50], tituloTemoporada[50], nomeDoArtista[50],  nomeDoPersongem[50],  descricao[50];
+    char titulo[50], ano[50], tituloTemoporada[50], nomeDoArtista[50],  nomeDoPersongem[50],  descricao[50], quant = 30;
     ArvoreSerie *raizS = criarArvoreSerie();
     ArvoreTemporada  *raizT = criaAvoreTemporada();
     Participantes *listaParticipante =criaListaParticipante();
@@ -55,13 +55,13 @@ int main(){
                 imprimirNomeDeUmArtista(raizS, nomeDoPersongem);
                 break;
             case 6:
-                imprimeParticipante(listaParticipante);
+                realizaTesteDeInsercaoDaSerie(raizS,quant);
                 break;
-            case 7:
-                imprimeArvoreSeries(raizS);
+            case 7: 
+                realizaTesteDeBusca(&raizT,quant);
                 break;
             case 8:
-                
+
                 break;
             default:
                 break;

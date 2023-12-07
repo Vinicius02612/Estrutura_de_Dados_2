@@ -53,30 +53,27 @@ Participantes *criaListaParticipante(){
 }
 // inserir participante da temporada
 
+ArvoreSerie *lerDadosSerie2(int codigo, char titulo[]){
+    ArvoreSerie *dado = (ArvoreSerie*)malloc(sizeof(ArvoreSerie));
+    dado->codigo = codigo;
+    strcpy(dado->titulo, titulo);
+    return dado;
+}
 ArvoreSerie *lerDadosSerie(){
     ArvoreSerie *dado = (ArvoreSerie*)malloc(sizeof(ArvoreSerie));
-    printf("Codigo:");
-    scanf("%d", &dado->codigo);
-    printf("Titulo da serie:");
-    scanf("%s", dado->titulo);
     return dado;
 }
-
-ArvoreTemporada *lerDadoTemporada(){
+ArvoreTemporada *lerDadoTemporada(int codigo, int numtemporada, int quantEp, char titulo[], char ano[]){
     ArvoreTemporada *dado = (ArvoreTemporada*)malloc(sizeof(ArvoreTemporada));
-    printf("Codigo da temporada: \n");
-    scanf("%d", &dado->codigo);
-    printf("Número da temporada: ");
-    scanf("%d", &dado->numTem);
-    printf("Quantidade de episódios: ");
-    scanf("%d", &dado->quantEp);
-    printf("Título da temporada: ");
-    scanf("%s", dado->titulo);
-    printf("Ano da temporada: ");
-    scanf("%s", dado->ano);
-
+    
+    dado->codigo = codigo;
+    dado->numTem = numtemporada;
+    dado->quantEp = quantEp;
+    strcpy(dado->titulo, titulo);
+    strcpy(dado->ano, ano);
     return dado;
 }
+
 
 Participantes *lerDadosParticipante(){
     Participantes *dado = (Participantes*)malloc(sizeof(Participantes));
@@ -143,14 +140,14 @@ ArvoreTemporada *insereTemporada(ArvoreTemporada **raiz, ArvoreTemporada *Dado){
         (*raiz) = (ArvoreTemporada*)malloc(sizeof(ArvoreTemporada));
         (*raiz) = Dado;
 
-        printf("Insira os dados do participante!\n\n Quantos participantes deseja inserir? \n");
+       /*  printf("Insira os dados do participante!\n\n Quantos participantes deseja inserir? \n");
         scanf("%d", &sco);
         while (i < sco)
         {
             dadoParicipante = lerDadosParticipante();
             (*raiz)->participante = insereParticipante(lista, dadoParicipante);
             i++;
-        }
+        } */
         
         (*raiz)->esq = NULL;
         (*raiz)->dir = NULL;
@@ -166,24 +163,12 @@ ArvoreTemporada *insereTemporada(ArvoreTemporada **raiz, ArvoreTemporada *Dado){
 
 // insere dados da serie na arvore
 void inserirSeries(ArvoreSerie **raiz, ArvoreSerie *DadoSerie){
-    ArvoreTemporada  *raizT = criaAvoreTemporada();
-    ArvoreTemporada *dadoTemporada;
+
     int sco, i = 0;
     if(*raiz == NULL){
         (*raiz) = (ArvoreSerie*)malloc(sizeof(ArvoreSerie));
         (*raiz) = DadoSerie;
         (*raiz)->numeroDeTemporada = 0;
-        
-        printf("Insira os dados da temporada!\n\n Quantas temporadas deseja inserir? \n");
-        scanf("%d", &sco);
-        while (i < sco)
-        {
-            dadoTemporada = lerDadoTemporada();
-            (*raiz)->temporada = insereTemporada(&raizT, dadoTemporada);
-            (*raiz)->numeroDeTemporada += 1;
-
-            i++;
-        }
         (*raiz)->esq = NULL;
         (*raiz)->dir = NULL;
     }else{
@@ -197,6 +182,7 @@ void inserirSeries(ArvoreSerie **raiz, ArvoreSerie *DadoSerie){
 // funcão que buscar uma series com base em seu codigo
 ArvoreSerie *BuscarSeries( ArvoreSerie *raizS, int codigo){
     ArvoreSerie *serieBusca;
+    serieBusca =  NULL;
     if(raizS !=NULL){
         if(codigo == raizS->codigo){
             serieBusca =  raizS;
@@ -206,9 +192,24 @@ ArvoreSerie *BuscarSeries( ArvoreSerie *raizS, int codigo){
             serieBusca = BuscarSeries(raizS->dir, codigo);
         }
     }
+    return serieBusca;
     
 }
 
+ArvoreTemporada *BuscaTemporada( ArvoreTemporada *raizT, int numTemporada ){
+    ArvoreTemporada *buscaTemporada;
+    buscaTemporada = NULL;
+    if(raizT != NULL){
+        if(numTemporada == raizT->numTem){
+            buscaTemporada = raizT;
+        }else if(numTemporada < raizT->numTem){
+            buscaTemporada = BuscaTemporada(raizT->esq, numTemporada);
+        }else{
+            buscaTemporada = BuscaTemporada(raizT->dir, numTemporada);
+        }
+    }
+    return buscaTemporada;
+}
 
 void imprimeParticipante(Participantes *lista){
     Participantes *aux = lista;
@@ -220,6 +221,7 @@ void imprimeParticipante(Participantes *lista){
         }
     }
 }
+
 // imprimindo os dados da arvore serie de forma crescente...
 void imprimeArvoreSeries(ArvoreSerie *raiz){
 
@@ -292,17 +294,80 @@ void imprimeSeriesPeloCodigo(ArvoreSerie *raiz, int codigo){
    
 }
 
+ //funçao que troca os valores de posição
+void embaralharOsDados(int *dados, int n) {
+    if (n > 1) {
+        int i;
+        for (i = 0; i < n - 1; i++) {
+            int j = i + rand() / (RAND_MAX / (n - i) + 1);
+            int t = dados[j];
+            dados[j] = dados[i];
+            dados[i] = t;
+        }
+    }
+}
 
 
-/* 
+void calcularTempo(double inicio, double fim ){
+    double tempo = 0;
+    double mediadetempo = 0;
+    double microsegundos = 0;
 
-void imprimir_participantes_determinada_temp(ArvoreTemporada *raiz){
-      Participantes *atual = raiz->temporada;
-      
-      printf("\nParticipantes da Temporada %d:\n", temp->numTem);
+    tempo = (double)(fim - inicio)/ CLOCKS_PER_SEC;
+    microsegundos += tempo * 1000000;
+    mediadetempo = microsegundos/30;
 
-      while (atual != NULL){
-      {
-            imprimeParticipante(atual);
-      }
-} */
+    printf("Tempo: %lf microssegundos\n", microsegundos); 
+    printf("Média: %lf microssegundos\n", mediadetempo);
+}
+
+void realizaTesteDeInsercaoDaSerie(ArvoreSerie *raizS, int quant){
+    int ArraycodigosAletorio[quant];
+
+  
+    // preenche o array de codigos aleatorios
+    for(int i = 0; i < quant; i++){
+        ArraycodigosAletorio[quant] =  i + 1;
+    }
+
+    // troca os valores de posição
+    embaralharOsDados(ArraycodigosAletorio, quant);
+
+    clock_t inicio, fim;
+    // marca o tempo inicial da inserção  da arvore series
+    inicio = clock();
+    for(int i = 0; i < quant; i++){
+        ArvoreSerie *raizS = criarArvoreSerie();
+        ArvoreSerie *dadoSerie = lerDadosSerie(ArraycodigosAletorio[i], "Arrow");
+        inserirSeries(&raizS, dadoSerie);
+    }
+    fim = clock();// marca o tempo final da inserção  da arvore series
+    calcularTempo(inicio, fim);
+}
+
+
+void realizaTesteDeBusca(ArvoreTemporada **raizT, int quant){
+    ArvoreTemporada **temporada, *testeBusca;
+    int *numeroDaTemporada;
+    temporada = (ArvoreTemporada**)malloc(sizeof(ArvoreTemporada*)*quant);
+
+    // preenche o array de codigos aleatorios
+    for(int i = 0; i < quant; i++){
+       temporada[i] = lerDadoTemporada(i, i,22,"teste","2222");
+       numeroDaTemporada[i] = i;
+    }
+
+
+    // troca os valores de posição
+    embaralharOsDados(numeroDaTemporada, quant);
+
+    clock_t inicio, fim;
+    // marca o tempo inicial da inserção  da arvore series
+    inicio = clock();
+    for(int i = 0; i < quant; i++){
+        testeBusca = BuscaTemporada(*temporada, numeroDaTemporada[i]);
+    }
+    fim = clock();// marca o tempo final da inserção  da arvore series
+    calcularTempo(inicio, fim);
+}
+

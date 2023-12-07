@@ -23,8 +23,11 @@ typedef struct arvoreTemporada ArvoreTemporada;
 ArvoreSerie *criarArvoreSerie();
 ArvoreTemporada *criaAvoreTemporada();
 
+
 ArvoreSerie *lerDadosSerie();
+ArvoreSerie *lerDadosSerie2(int codigo, char titulo[]);
 ArvoreTemporada *lerDadoTemporada();
+ArvoreTemporada *lerDadoTemporada2(int codigo, int numtemporada, int quantEp, char titulo[], char ano[]);
 
 Participantes *criaListaParticipante();
 Participantes *insereParticipante(Participantes *lista, Participantes *dadoParticipante);
@@ -47,3 +50,8 @@ void imprimeTemporada(ArvoreTemporada temporada);
 
 void imprimirTemporada(ArvoreSerie *raiz);
 void imprimirTemporadaDeUmaSerie(ArvoreSerie *raiz, int codigo, int numTemporada);
+
+void embaralharOsDados(int *dados, int n);
+void calcularTempo(double inicio, double fim );
+void realizaTesteDeInsercaoDaSerie(ArvoreSerie *raizS, int quant);
+void realizaTesteDeBusca(ArvoreTemporada **raizT, int quant);
