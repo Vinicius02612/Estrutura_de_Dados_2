@@ -184,40 +184,77 @@ Artista* procuraMenor(Artista* atual){
     return no1;
 }
 
-Artista* remove_NO_artista(struct Artista** raiz, char nome_artista[]){
-      int removeu = 0;
-      Artista *aux = NULL;
-      if (*raiz != NULL)
-      {
-            if (strcmp((*raiz)->nome_artista, nome_artista) == 0)
-            {
-            if((*raiz)->esq == NULL && (*raiz)->dir == NULL){
-                aux = *raiz;
-                (*raiz) = NULL;
-            }else if((*raiz)->esq == NULL || (*raiz)->dir == NULL){
-                if((*raiz)->esq != NULL){
-                    aux = *raiz;
-                    *raiz = (*raiz)->esq;
-                }else{
-                    aux = *raiz;
-                    *raiz = (*raiz)->dir;
-                }
-            }else{
-                aux = buscrFolh((*raiz)->esq);
-                *raiz = aux;
-                aux = NULL;
+Artista* remove_NO_artista(struct Artista** raiz, char nome_artista[]) {
+    int removeu = 0;
+    Artista *aux = NULL;
+
+    if (*raiz != NULL) {
+        if (strcmp((*raiz)->nome_artista, nome_artista) == 0) {
+            aux = *raiz;
+
+            if ((*raiz)->esq == NULL && (*raiz)->dir == NULL) {
+                // Caso 1: Nó sem filhos
+                free(aux);
+                *raiz = NULL;
+            } else if ((*raiz)->esq == NULL || (*raiz)->dir == NULL) {
+                // Caso 2: Nó com um filho
+                *raiz = ((*raiz)->esq != NULL) ? (*raiz)->esq : (*raiz)->dir;
+                free(aux);
+            } else {
+                // Caso 3: Nó com dois filhos
+                aux = buscarFolha(&(*raiz)->esq);
+                (*raiz)->nome_artista = aux->nome_artista;
+                remove_NO_artista(&(*raiz)->esq, aux->nome_artista);
             }
-            free(aux);
+
             removeu = 1;
-        }else if(strcmp((*raiz)->info->nome_artista, nome_artista) < 0){
+        } else if (strcmp((*raiz)->nome_artista, nome_artista) < 0) {
             removeu = remove_NO_artista(&((*raiz)->dir), nome_artista);
-        }else if(strcmp((*raiz)->info->nome_artista, nome_artista) > 0){
+        } else if (strcmp((*raiz)->nome_artista, nome_artista) > 0) {
             removeu = remove_NO_artista(&((*raiz)->esq), nome_artista);
         }
-      }
-      balanceia_artista(*raiz);
-      return removeu;
+    }
+
+    // Não esqueça de chamar a função de balanceamento após a remoção
+    balanceia_artista(*raiz);
+
+    return *raiz;
 }
+
+// Artista* remove_NO_artista(struct Artista** raiz, char nome_artista[]){
+//       int removeu = 0;
+//       Artista *aux = NULL;
+//       if (*raiz != NULL)
+//       {
+//             if (strcmp((*raiz)->nome_artista, nome_artista) == 0)
+//             {
+//             if((*raiz)->esq == NULL && (*raiz)->dir == NULL){
+//                 aux = *raiz;
+//                 (*raiz) = NULL;
+//             }else if((*raiz)->esq == NULL || (*raiz)->dir == NULL){
+//                 if((*raiz)->esq != NULL){
+//                     aux = *raiz;
+//                     *raiz = (*raiz)->esq;
+//                 }else{
+//                     aux = *raiz;
+//                     *raiz = (*raiz)->dir;
+//                 }
+//             }else{
+//                 aux = buscrFolh((*raiz)->esq);
+//                 *raiz = aux;
+//                 aux = NULL;
+//             }
+//             free(aux);
+//             removeu = 1;
+//         }else if(strcmp((*raiz)->info->nome_artista, nome_artista) < 0){
+//             removeu = remove_NO_artista(&((*raiz)->dir), nome_artista);
+//         }else if(strcmp((*raiz)->info->nome_artista, nome_artista) > 0){
+//             removeu = remove_NO_artista(&((*raiz)->esq), nome_artista);
+//         }
+//       }
+//       balanceia_artista(*raiz);
+//       return removeu;
+// }
 
 
 
