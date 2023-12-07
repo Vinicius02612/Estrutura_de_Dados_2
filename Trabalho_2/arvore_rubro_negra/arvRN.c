@@ -184,7 +184,7 @@ Artista* procuraMenor(Artista* atual){
     return no1;
 }
 
-Artista* remove_NO_artista(struct Artista** raiz, char nome_artista[]) {
+Artista* remove_NO_artista(Artista** raiz, char nome_artista[]) {
     int removeu = 0;
     Artista *aux = NULL;
 
