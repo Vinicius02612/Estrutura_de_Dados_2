@@ -60,7 +60,7 @@ int cria_No_Artista(Artista **raiz, char nome_artista[], char estilo_musical[], 
       return new;
 }
 
-Artista rotacao_esquerda_artista(Artista **raiz){
+Artista* rotacao_esquerda_artista(Artista **raiz){
       Artista *aux;
 
       aux = (*raiz)->dir;
@@ -72,7 +72,7 @@ Artista rotacao_esquerda_artista(Artista **raiz){
       (*raiz)->esq->cor = RED;
 }
 
-Artista rotacao_direita_artista(Artista **raiz){
+Artista* rotacao_direita_artista(Artista **raiz){
             Artista *aux;
 
       aux = (*raiz)->esq;
@@ -95,7 +95,7 @@ void troca_Cor_artista(Artista *raiz){
       }
 }
 
-Artista balanceia_artista(Artista *raiz){
+Artista* balanceia_artista(Artista *raiz){
 
       if (cor((raiz)->dir) == RED && cor((raiz)->esq) == BLACK)
              rotacao_esquerda_artista(&raiz);
@@ -106,7 +106,7 @@ Artista balanceia_artista(Artista *raiz){
       if(cor((raiz)->esq) == RED && cor((raiz)->dir) == RED)
             troca_Cor_artista(raiz);
 
-      //return raiz;
+      return raiz;
 }
 
 int insere_NO_artista(Artista **raiz, char nome_artista[], char estilo_musical[], int num_albuns){
@@ -137,10 +137,10 @@ int insere_RB(Artista **raiz, char nome_artista[], char estilo_musical[], int nu
           if((*raiz) != NULL)
             (*raiz)->cor = BLACK;
 
-          return resposta;
+      return resposta;
 }
 
-Artista move_esq_red(Artista *raiz){
+Artista* move_esq_red(Artista *raiz){
       troca_Cor_artista(raiz);
       if (cor_artista(raiz->dir->esq) == RED)
       {
@@ -148,20 +148,20 @@ Artista move_esq_red(Artista *raiz){
             rotacao_esquerda_artista(raiz);
             troca_Cor_artista(raiz);
       }
-      //return raiz;
+      return raiz;
 }
 
-Artista move_dir_red(Artista *raiz){
+Artista* move_dir_red(Artista *raiz){
       troca_Cor_artista(raiz);
       if (cor_artista(raiz->esq->esq) == RED)
       {
             rotacao_direita_artista(raiz);
             troca_Cor_artista(raiz);
       }
-      //return raiz;
+      return raiz;
 }
 
-Artista remove_menor(Artista *raiz){
+Artista* remove_menor(Artista *raiz){
       if (raiz->esq == NULL)
       {
             free(raiz);
@@ -203,7 +203,7 @@ Artista* remove_NO_artista(Artista** raiz, char nome_artista[]) {
             } else {
                 // Caso 3: Nó com dois filhos
                 aux = buscarFolha(&(*raiz)->esq);
-                (*raiz)->nome_artista = aux->nome_artista;
+                &(*raiz)->nome_artista = aux->nome_artista;
                 remove_NO_artista(&(*raiz)->esq, aux->nome_artista);
             }
 
