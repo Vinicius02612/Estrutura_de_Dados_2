@@ -37,6 +37,8 @@ typedef struct {
     Musica* fim;
 } ListaDupla;
 
+
+// -----------------REFERENTE A ARTISTA-----------------
 int cor_artista(Artista *raiz){
       int cor;
       if (raiz==NULL) 
@@ -213,7 +215,7 @@ Artista* remove_NO_artista(Artista** raiz, char nome_artista[]){
             } else {
                 // Caso 3: Nó com dois filhos
                 aux = buscarFolha_artista(&(*raiz)->esq);
-                (*raiz)->nome_artista = aux->nome_artista;
+                strcpy(&(*raiz)->nome_artista,aux->nome_artista);
                 remove_NO_artista(&(*raiz)->esq, aux->nome_artista);
             }
 
@@ -225,55 +227,189 @@ Artista* remove_NO_artista(Artista** raiz, char nome_artista[]){
         }
     }
 
-    // Não esqueça de chamar a função de balanceamento após a remoção
     balanceia_artista(*raiz);
 
     return *raiz;
 }
 
-// Artista* remove_NO_artista(struct Artista** raiz, char nome_artista[]){
-//       int remove = 0;
-//       Artista *aux = NULL;
-//       if (*raiz != NULL)
-//       {
-//             if (strcmp((*raiz)->nome_artista, nome_artista) == 0)
-//             {
-//             if((*raiz)->esq == NULL && (*raiz)->dir == NULL){
-//                 aux = *raiz;
-//                 (*raiz) = NULL;
-//             }else if((*raiz)->esq == NULL || (*raiz)->dir == NULL){
-//                 if((*raiz)->esq != NULL){
-//                     aux = *raiz;
-//                     *raiz = (*raiz)->esq;
-//                 }else{
-//                     aux = *raiz;
-//                     *raiz = (*raiz)->dir;
-//                 }
-//             }else{
-//                 aux = buscrFolh((*raiz)->esq);
-//                 *raiz = aux;
-//                 aux = NULL;
-//             }
-//             free(aux);
-//             remove = 1;
-//         }else if(strcmp((*raiz)->info->nome_artista, nome_artista) < 0){
-//             remove = remove_NO_artista(&((*raiz)->dir), nome_artista);
-//         }else if(strcmp((*raiz)->info->nome_artista, nome_artista) > 0){
-//             remove = remove_NO_artista(&((*raiz)->esq), nome_artista);
-//         }
-//       }
-//       balanceia_artista(*raiz);
-//       return remove;
-// }
+// -----------------REFERENTE A ALBUM-----------------
+
+int cor_album(Album *raiz) {
+    int cor;
+    if (raiz == NULL) {
+        cor = BLACK;
+    } else {
+        cor = raiz->cor;
+    }
+    return cor;
+}
+
+Album* cria_No_Album(Album **raiz, char titulo[], int anoLancamento, int qtdMusicas) {
+    Album *new = (Album *)malloc(sizeof(Album));
+    strcpy(new->titulo, titulo);
+    new->anoLancamento = anoLancamento;
+    new->qtdMusicas = qtdMusicas;
+    new->cor = RED;
+    new->esq = NULL;
+    new->dir = NULL;
+    return new;
+}
 
 
-
-
-
-
-
-
-
+Album* rotacao_esquerda_album(Album **raiz) {
+    Album *aux;
+    aux = (*raiz)->dir;
+    (*raiz)->dir = aux->esq;
+    aux->esq = *raiz;
+    *raiz = aux;
+    (*raiz)->cor = (*raiz)->esq->cor;
+    (*raiz)->esq->cor = RED;
+    return *raiz;
+}
+// 
+Album* rotacao_direita_album(Album **raiz) {
+    Album *aux;
+    aux = (*raiz)->esq;
+    (*raiz)->esq = aux->dir;
+    aux->dir = *raiz;
+    *raiz = aux;
+    (*raiz)->cor = (*raiz)->dir->cor;
+    (*raiz)->dir->cor = RED;
+    return *raiz;
+}
+// 
+void troca_Cor_album(Album *raiz) {
+    if (raiz != NULL) {
+        raiz->cor = !raiz->cor;
+        if (raiz->dir)
+            raiz->dir->cor = !raiz->dir->cor;
+        else if (raiz->esq)
+            raiz->esq->cor = !raiz->esq->cor;
+    }
+}
+// 
+Album* balanceia_album(Album *raiz) {
+    if (cor_album(raiz->dir) == RED && cor_album(raiz->esq) == BLACK)
+        raiz = rotacao_esquerda_album(&raiz);
+// 
+    if (cor_album(raiz->esq) == RED && cor_album(raiz->esq->esq) == RED)
+        raiz = rotacao_direita_album(&raiz);
+// 
+    if (cor_album(raiz->esq) == RED && cor_album(raiz->dir) == RED)
+        troca_Cor_album(raiz);
+// 
+    return raiz;
+}
+// 
+int insere_NO_album(Album **raiz, char titulo[], int anoLancamento, int qtdMusicas) {
+    int criou_no = 0;
+    if (*raiz == NULL) {
+        criou_no = cria_No_Album(raiz, titulo, anoLancamento, qtdMusicas);
+    }
+    if (strcmp((*raiz)->titulo, titulo) == 0) {
+        criou_no = 2; // Nó já existe
+    } else if (strcmp((*raiz)->titulo, titulo) < 0) {
+        criou_no = insere_NO_album(&((*raiz)->dir), titulo, anoLancamento, qtdMusicas);
+    } else if (strcmp((*raiz)->titulo, titulo) > 0) {
+        criou_no = insere_NO_album(&((*raiz)->esq), titulo, anoLancamento, qtdMusicas);
+    }
+// 
+    balanceia_album(*raiz);
+// 
+    return criou_no;
+}
+// 
+int insere_RB_album(Album **raiz, char titulo[], int anoLancamento, int qtdMusicas) {
+    int resposta;
+    *raiz = insere_NO_album(*raiz, titulo, anoLancamento, qtdMusicas);
+    if ((*raiz) != NULL)
+        (*raiz)->cor = BLACK;
+    return resposta;
+}
+// 
+Album* move_esq_red_album(Album *raiz) {
+    troca_Cor_album(raiz);
+    if (cor_album(raiz->dir->esq) == RED) {
+        rotacao_direita_album(raiz->dir);
+        rotacao_esquerda_album(raiz);
+        troca_Cor_album(raiz);
+    }
+    return raiz;
+}
+// 
+Album* move_dir_red_album(Album *raiz) {
+    troca_Cor_album(raiz);
+    if (cor_album(*raiz->esq->esq) == RED) {
+        rotacao_direita_album(raiz);
+        troca_Cor_album(raiz);
+    }
+    return raiz;
+}
+// 
+Album* remove_menor_album(Album *raiz) {
+    if (raiz->esq == NULL) {
+        free(raiz);
+    }
+    if (cor_album(raiz->esq) == BLACK && cor_album(raiz->esq->esq) == BLACK) {
+        raiz = move_esq_red_album(raiz);
+    }
+// 
+    remove_menor_album(raiz->esq);
+    return balanceia_album(raiz);
+}
+// 
+Album* procuraMenor_album(Album* atual) {
+    Album *no1 = atual;
+    Album *no2 = atual->esq;
+    while (no2 != NULL) {
+        no1 = no2;
+        no2 = no2->esq;
+    }
+    return no1;
+}
+// 
+Album* buscarFolha_album(Album *ultimo) {
+    if (ultimo->dir != NULL) {
+        buscarFolha_album(ultimo->dir);
+    } else {
+        return ultimo;
+    }
+}
+// 
+Album* remove_NO_album(Album** raiz, char titulo[]) {
+    int remove = 0;
+    Album *aux = NULL;
+// 
+    if (*raiz != NULL) {
+        if (strcmp((*raiz)->titulo, titulo) == 0) {
+            aux = *raiz;
+// 
+            if ((*raiz)->esq == NULL && (*raiz)->dir == NULL) {
+                free(aux);
+                *raiz = NULL;
+            } else if ((*raiz)->esq == NULL || (*raiz)->dir == NULL) {
+                *raiz = ((*raiz)->esq != NULL) ? (*raiz)->esq : (*raiz)->dir;
+                free(aux);
+            } else {
+                aux = buscarFolha_album(&(*raiz)->esq);
+                (*raiz)->titulo = aux->titulo;
+                remove_NO_album(&(*raiz)->esq, aux->titulo);
+            }
+// 
+            remove = 1;
+        } else if (strcmp((*raiz)->titulo, titulo) < 0) {
+            remove = remove_NO_album(&((*raiz)->dir), titulo);
+        } else if (strcmp((*raiz)->titulo, titulo) > 0) {
+            remove = remove_NO_album(&((*raiz)->esq), titulo);
+        }
+    }
+// 
+    balanceia_album(*raiz);
+// 
+    return *raiz;
+}
+// 
+// -----------------REFERENTE A MUSICA-----------------
 
 
 void inicializarLista(ListaDupla* lista) {

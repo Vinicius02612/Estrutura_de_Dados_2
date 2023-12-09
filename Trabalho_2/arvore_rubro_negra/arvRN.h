@@ -20,6 +20,10 @@ Artista* procuraMenor(Artista *atual);
 Artista* buscarFolha_artista(Artista *ultimo);
 Artista* remove_NO_artista(Artista** raiz, char nome_artista[]);
 
+// -----------------REFERENTE A ALBUM-----------------
+
+Album *rotacao_esquerda_album(Album **raiz);
+
 // -----------------REFERENTE A MUSICA-----------------
 void inicializarLista(ListaDupla *lista);
 void adicionarMusica(ListaDupla *lista, Musica novaMusica);
