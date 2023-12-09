@@ -1,5 +1,5 @@
 typedef struct artista Artista; //nome  do  artista,  o  estilo musical, o número de álbuns, e os Álbuns
-typedef struct album Album;//título,  o  ano  de  lançamento,  a  quantidade  de  músicas  e  as  Músicas  (endereço  lista  ordenada).
+ struct  Album;//título,  o  ano  de  lançamento,  a  quantidade  de  músicas  e  as  Músicas  (endereço  lista  ordenada).
 typedef struct musica Musica;//título, e a quantidade de minutos.
 
 
@@ -22,7 +22,18 @@ Artista* remove_NO_artista(Artista** raiz, char nome_artista[]);
 
 // -----------------REFERENTE A ALBUM-----------------
 
+Album *cria_No_Album(Album **raiz, char titulo[], int anoLancamento, int qtdMusicas);
 Album *rotacao_esquerda_album(Album **raiz);
+Album *rotacao_direita_album(Album **raiz);
+void troca_Cor_album(Album *raiz);
+Album *balanceia_album(Album *raiz) int insere_NO_album(Album **raiz, char titulo[], int anoLancamento, int qtdMusicas);
+int insere_RB_album(Album **raiz, char titulo[], int anoLancamento, int qtdMusicas);
+Album *move_esq_red_album(Album *raiz);
+Album *move_dir_red_album(Album *raiz);
+Album *remove_menor_album(Album *raiz);
+Album *procuraMenor_album(Album *atual);
+Album *buscarFolha_album(Album *ultimo);
+Album *remove_NO_album(Album **raiz, char titulo[]);
 
 // -----------------REFERENTE A MUSICA-----------------
 void inicializarLista(ListaDupla *lista);
