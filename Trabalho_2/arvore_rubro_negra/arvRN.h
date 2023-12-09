@@ -17,13 +17,8 @@ Artista* move_esq_red(Artista *raiz);
 Artista* move_dir_red(Artista *raiz);
 Artista* remove_menor(Artista *raiz);
 Artista* procuraMenor(Artista *atual);
-Artista* remove_NO_artista(struct Artista** raiz, char nome_artista[])
-
-
-
-
-
-
+Artista* buscarFolha_artista(Artista *ultimo);
+Artista* remove_NO_artista(Artista** raiz, char nome_artista[]);
 
 // -----------------REFERENTE A MUSICA-----------------
 void inicializarLista(ListaDupla *lista);

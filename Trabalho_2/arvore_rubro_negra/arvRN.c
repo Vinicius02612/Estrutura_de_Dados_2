@@ -184,8 +184,18 @@ Artista* procuraMenor(Artista* atual){
     return no1;
 }
 
-Artista* remove_NO_artista(Artista** raiz, char nome_artista[]) {
-    int removeu = 0;
+Artista* buscarFolha_artista(Artista *ultimo){
+    // vai procurar o maior filho a esquerda do no.
+    // quando encontra-lo a variavel aux vai pegar esse valor.
+    if(ultimo->dir != NULL){
+        buscarFolha_artista(ultimo->dir);
+    }else{
+        return ultimo;
+    }
+}
+
+Artista* remove_NO_artista(Artista** raiz, char nome_artista[]){
+    int remove = 0;
     Artista *aux = NULL;
 
     if (*raiz != NULL) {
@@ -202,16 +212,16 @@ Artista* remove_NO_artista(Artista** raiz, char nome_artista[]) {
                 free(aux);
             } else {
                 // Caso 3: Nó com dois filhos
-                aux = buscarFolha(&(*raiz)->esq);
-                &(*raiz)->nome_artista = aux->nome_artista;
+                aux = buscarFolha_artista(&(*raiz)->esq);
+                (*raiz)->nome_artista = aux->nome_artista;
                 remove_NO_artista(&(*raiz)->esq, aux->nome_artista);
             }
 
-            removeu = 1;
+            remove = 1;
         } else if (strcmp((*raiz)->nome_artista, nome_artista) < 0) {
-            removeu = remove_NO_artista(&((*raiz)->dir), nome_artista);
+            remove = remove_NO_artista(&((*raiz)->dir), nome_artista);
         } else if (strcmp((*raiz)->nome_artista, nome_artista) > 0) {
-            removeu = remove_NO_artista(&((*raiz)->esq), nome_artista);
+            remove = remove_NO_artista(&((*raiz)->esq), nome_artista);
         }
     }
 
@@ -222,7 +232,7 @@ Artista* remove_NO_artista(Artista** raiz, char nome_artista[]) {
 }
 
 // Artista* remove_NO_artista(struct Artista** raiz, char nome_artista[]){
-//       int removeu = 0;
+//       int remove = 0;
 //       Artista *aux = NULL;
 //       if (*raiz != NULL)
 //       {
@@ -245,15 +255,15 @@ Artista* remove_NO_artista(Artista** raiz, char nome_artista[]) {
 //                 aux = NULL;
 //             }
 //             free(aux);
-//             removeu = 1;
+//             remove = 1;
 //         }else if(strcmp((*raiz)->info->nome_artista, nome_artista) < 0){
-//             removeu = remove_NO_artista(&((*raiz)->dir), nome_artista);
+//             remove = remove_NO_artista(&((*raiz)->dir), nome_artista);
 //         }else if(strcmp((*raiz)->info->nome_artista, nome_artista) > 0){
-//             removeu = remove_NO_artista(&((*raiz)->esq), nome_artista);
+//             remove = remove_NO_artista(&((*raiz)->esq), nome_artista);
 //         }
 //       }
 //       balanceia_artista(*raiz);
-//       return removeu;
+//       return remove;
 // }
 
 
