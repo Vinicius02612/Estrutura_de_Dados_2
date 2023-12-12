@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <string.h>
+#include <time.h>
 #include "arvRN.h"
 
 #define RED 1
@@ -32,7 +34,7 @@ typedef struct Musica {
     struct Musica* anterior;
 } Musica;
 
-typedef struct {
+typedef struct listaDupla{
     Musica* inicio;
     Musica* fim;
 } ListaDupla;
