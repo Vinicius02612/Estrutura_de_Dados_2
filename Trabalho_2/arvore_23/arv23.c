@@ -174,3 +174,225 @@ Arv23_artista *insere_no_artista(Arv23_artista **raiz, char nome_artista[], Arv2
 }
 
 
+void RemoveMaiorInfoEsq(Arv23_artista** RaizArv23, Arv23_artista** PaiMaior, Arv23_artista** MaiorInfoRemove, int LocalInfo, char* Situacao) {
+    if (*MaiorInfoRemove != NULL) {
+        if (VerificaFolhaArtista(*MaiorInfoRemove) == 1) {
+            Artista* Aux;
+            if (LocalInfo == 1) {
+                Aux = (*RaizArv23)->info1;
+
+                if ((*MaiorInfoRemove)->numinfo == 2) {
+                    (*RaizArv23)->info1 = (*MaiorInfoRemove)->info2;
+                    (*MaiorInfoRemove)->info2 = Aux;
+                }
+                else {
+                    (*RaizArv23)->info1 = (*MaiorInfoRemove)->info1;
+                    (*MaiorInfoRemove)->info1 = Aux;
+                }
+
+            }
+            else if (LocalInfo == 2) {
+                Aux = (*RaizArv23)->info2;
+
+                if ((*MaiorInfoRemove)->numinfo == 2) {
+                    (*RaizArv23)->info2 = (*MaiorInfoRemove)->info2;
+                    (*MaiorInfoRemove)->info2 = Aux;
+                }
+                else {
+                    (*RaizArv23)->info2 = (*MaiorInfoRemove)->info1;
+                    (*MaiorInfoRemove)->info1 = Aux;
+                }
+
+            }
+
+            RemoveArtista23(MaiorInfoRemove, PaiMaior, Aux->nome_artista, -1, Situacao);
+        }
+        else {
+            if ((*MaiorInfoRemove)->numinfo == 2) {
+                RemoveMaiorInfoEsq(RaizArv23, MaiorInfoRemove, &((*MaiorInfoRemove)->dir), LocalInfo, Situacao);
+            }
+            else if ((*MaiorInfoRemove)->numinfo == 1) {
+                RemoveMaiorInfoEsq(RaizArv23, MaiorInfoRemove, &((*MaiorInfoRemove)->centro), LocalInfo, Situacao);
+            }
+        } 
+    }
+    RedistribuiArv23Artista(MaiorInfoRemove, PaiMaior);
+}
+
+
+void RemoveArtista23(Arv23_artista** RaizArv23, Arv23_artista** Pai, char* NomeArtista, int LinhaArtista, char* Situacao) {
+    if (*RaizArv23 != NULL) {
+        if (strcasecmp(NomeArtista, (*RaizArv23)->info1->nome_artista) == 0) {
+            if (LinhaArtista == -1) {
+                if (VerificaFolhaArtista(*RaizArv23) == 1) {
+                    if ((*RaizArv23)->numinfo == 2) {
+                        free((*RaizArv23)->info1);
+                        (*RaizArv23)->info1 = (*RaizArv23)->info2;
+                        (*RaizArv23)->info2 = NULL;
+                        (*RaizArv23)->numinfo = 1;
+                    }
+                    else if ((*RaizArv23)->numinfo == 1) {
+                        free((*RaizArv23)->info1);
+                        (*RaizArv23)->info1 = NULL;
+                        (*RaizArv23)->numinfo = 0;
+                    }
+                }
+                else {
+                    Arv23_artista **MaiorInfoRemove = &((*RaizArv23)->esq);
+                    Arv23_artista **PaiMaior = RaizArv23;
+                    RemoveMaiorInfoEsqArtista(RaizArv23, PaiMaior, MaiorInfoRemove, 1, Situacao);
+                }
+            }
+            else {
+                if ((*RaizArv23)->info1 == NULL) {
+                    RemoveArtista23(RaizArv23, Pai, NomeArtista, -1, Situacao);
+                }
+            }
+            strcpy(Situacao, "Operacao realizada com sucesso!");
+        }
+        else if ((*RaizArv23)->numinfo == 2 && strcasecmp(NomeArtista, (*RaizArv23)->info2->nome_artista) == 0) {
+            
+            if (LinhaArtista == -1) {
+                if (VerificaFolhaArtista(*RaizArv23) == 1) {
+                    free((*RaizArv23)->info2);
+                    (*RaizArv23)->info2 = NULL;
+                    (*RaizArv23)->numinfo = 1;
+                }
+                else {
+                    Arv23_artista **MaiorInfoRemove = &((*RaizArv23)->centro);
+                    Arv23_artista **PaiMaior = RaizArv23;
+                    RemoveMaiorInfoEsqArtista(RaizArv23, PaiMaior, MaiorInfoRemove, 2, Situacao);
+                }
+            }
+            else {
+                if ((*RaizArv23)->info2 == NULL) {
+                    RemoveArtista23(RaizArv23, Pai, NomeArtista, -1, Situacao);
+                }
+            }
+            strcpy(Situacao, "Operacao realizada com sucesso!");
+        }
+        else if (strcasecmp(NomeArtista, (*RaizArv23)->info1->nome_artista) < 0) {
+            RemoveArtista23(&((*RaizArv23)->esq), RaizArv23, NomeArtista, LinhaArtista, Situacao);
+        }
+        else if ((*RaizArv23)->numinfo == 1 || ((*RaizArv23)->numinfo == 2 && strcasecmp(NomeArtista, (*RaizArv23)->info2->nome_artista) < 0)) {
+            RemoveArtista23(&((*RaizArv23)->centro), RaizArv23, NomeArtista, LinhaArtista, Situacao);
+        }
+        else {
+            RemoveArtista23(&((*RaizArv23)->dir), RaizArv23, NomeArtista, LinhaArtista, Situacao);
+        }
+    }
+    RedistribuiArv23Artista(RaizArv23, Pai);
+}
+
+void RedistribuiArv23Artista(Arv23_artista** RaizArv23, Arv23_artista** Pai) {
+    if (*RaizArv23 != NULL) {
+        if ((*RaizArv23)->numinfo == 0) {
+            if (Pai != NULL) {
+                if ((*RaizArv23) == ((*Pai)->dir)) {
+                    if ((*Pai)->centro->numinfo == 2) {
+                        (*RaizArv23)->info1 = (*Pai)->info2;
+                        (*RaizArv23)->numinfo = 1;
+                        (*Pai)->info2 = (*Pai)->centro->info2;
+                        (*Pai)->centro->numinfo = 1;
+                        (*Pai)->centro->info2 = NULL;
+                        (*RaizArv23)->esq = (*Pai)->centro->dir;
+                        (*Pai)->centro->dir = NULL;
+                    }
+                    else if ((*Pai)->centro->numinfo == 1) {
+                        (*RaizArv23)->info2 = (*Pai)->info2;
+                        (*RaizArv23)->dir = (*RaizArv23)->centro;
+                        (*RaizArv23)->info1 = (*Pai)->centro->info1;
+                        (*RaizArv23)->numinfo = 2;
+                        (*Pai)->numinfo = 1;
+                        (*RaizArv23)->centro = (*Pai)->centro->centro;
+                        (*RaizArv23)->esq = (*Pai)->centro->esq;
+                        free((*Pai)->centro);
+                        (*Pai)->centro = (*RaizArv23);
+                        (*Pai)->dir = NULL;
+                    }
+                }
+                else if ((*RaizArv23) == (*Pai)->centro) {
+                    if ((*Pai)->esq->numinfo == 2) {
+                        (*RaizArv23)->info1 = (*Pai)->info1;
+                        (*RaizArv23)->numinfo = 1;
+                        (*Pai)->info1 = (*Pai)->esq->info2;
+                        (*Pai)->esq->numinfo = 1;
+                        (*RaizArv23)->esq = (*Pai)->esq->dir;
+                        (*Pai)->esq->dir = NULL;
+                    }
+                    else if ((*Pai)->esq->numinfo == 1) {
+                        if ((*Pai)->numinfo == 2) {
+                            (*RaizArv23)->info2 = (*Pai)->info1;
+                            (*RaizArv23)->info1 = (*Pai)->esq->info1;
+                            (*RaizArv23)->numinfo = 2;
+                            (*RaizArv23)->dir = (*RaizArv23)->centro;
+                            (*RaizArv23)->centro = (*Pai)->esq->centro;
+                            (*RaizArv23)->esq = (*Pai)->esq->esq;
+                            free((*Pai)->esq);
+                            (*Pai)->esq = (*RaizArv23);
+                            (*Pai)->info1 = (*Pai)->info2;
+                            (*Pai)->numinfo = 1;
+                            (*Pai)->centro = (*Pai)->dir;
+                            (*Pai)->dir = NULL;
+                        }
+                        else if ((*Pai)->numinfo == 1) {
+                            (*RaizArv23)->info2 = (*Pai)->info1;
+                            (*RaizArv23)->info1 = (*Pai)->esq->info1;
+                            (*RaizArv23)->numinfo = 2;
+                            (*Pai)->numinfo = 0;
+                            (*RaizArv23)->dir = (*RaizArv23)->centro;
+                            (*RaizArv23)->centro = (*Pai)->esq->centro;
+                            (*RaizArv23)->esq = (*Pai)->esq->esq;
+                            free((*Pai)->esq);
+                            (*Pai)->esq = NULL;
+                        }
+                    }
+                }
+                else if ((*RaizArv23) == (*Pai)->esq) {
+                    if ((*Pai)->centro->numinfo == 2) {
+                        (*RaizArv23)->info1 = (*Pai)->info1;
+                        (*RaizArv23)->numinfo = 1;
+                        (*Pai)->info1 = (*Pai)->centro->info1;
+                        (*Pai)->centro->numinfo = 1;
+                        (*Pai)->centro->info1 = (*Pai)->centro->info2;
+                        (*RaizArv23)->esq = (*RaizArv23)->centro;
+                        (*RaizArv23)->centro = (*Pai)->centro->esq;
+                        (*Pai)->centro->esq = (*Pai)->centro->centro;
+                        (*Pai)->centro->centro = (*Pai)->centro->dir;
+                        (*Pai)->centro->dir = NULL;
+                    }
+                    else if ((*Pai)->centro->numinfo == 1) {
+                        if ((*Pai)->numinfo == 2) {
+                            (*RaizArv23)->info1 = (*Pai)->info1;
+                            (*RaizArv23)->info2 = (*Pai)->centro->info1;
+                            (*RaizArv23)->numinfo = 2;
+                            (*RaizArv23)->esq = (*RaizArv23)->centro;
+                            (*RaizArv23)->centro = (*Pai)->centro->esq;
+                            (*RaizArv23)->dir = (*Pai)->centro->centro;
+                            (*Pai)->info1 = (*Pai)->info2;
+                            (*Pai)->numinfo = 1;
+                            free((*Pai)->centro);
+                            (*Pai)->centro = (*Pai)->dir;
+                            (*Pai)->dir = NULL;
+                        }
+                        else if ((*Pai)->numinfo == 1) {
+                            (*RaizArv23)->info1 = (*Pai)->info1;
+                            (*RaizArv23)->esq = (*RaizArv23)->centro;
+                            (*RaizArv23)->info2 = (*Pai)->centro->info1;
+                            (*RaizArv23)->centro = (*Pai)->centro->esq;
+                            (*RaizArv23)->dir = (*Pai)->centro->centro;
+                            (*Pai)->numinfo = 0;
+                            (*RaizArv23)->numinfo = 2;
+                            free((*Pai)->centro);
+                            (*Pai)->centro = (*RaizArv23);
+                            (*Pai)->esq = NULL;
+                        }
+                    }
+                }
+            }
+            else if (Pai == NULL) {
+                (*RaizArv23) = (*RaizArv23)->centro;
+            }  
+        }
+    }
+}
