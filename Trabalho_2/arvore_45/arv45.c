@@ -12,7 +12,7 @@ typedef struct endereco{
 typedef struct bloco45
 {
     //         S    INIC  FIM    -   
-    Enderecos end1, end2, end3, end4; // passa a ser uma arvore B de ordem 3, ja que não tem a info 4
+    Enderecos end1, end2, end3, end4;
     Bloco45 *esq, *esqCentro, *centro, *dirCentro, *dir; 
     int quantInfo;
 }Bloco45;
@@ -71,7 +71,7 @@ void adiconaBloco(Bloco45 **raiz, Enderecos info, Bloco45 *maiorNo){
                 (*raiz)->end3 = info;
                 (*raiz)->dirCentro = maiorNo;
             }else if(info.endeFim < (*raiz)->end2.endeInicio){
-            
+                
             }
 
         }

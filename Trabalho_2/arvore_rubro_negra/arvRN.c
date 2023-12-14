@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <string.h>
+#include <time.h>
 #include "arvRN.h"
 
 #define RED 1
