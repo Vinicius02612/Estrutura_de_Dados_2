@@ -1,5 +1,6 @@
 typedef struct artista Artista;
 typedef struct dadoArtista DadoArtista;
+typedef struct dadoAlbum DadoAlbum;
 typedef  struct  album Album;
 
  //nome  do  artista,  o  estilo musical, o número de álbuns, e os Álbuns
@@ -28,19 +29,22 @@ void imprimirArtista(Artista *raiz, int nivel);
 Artista* buscarFolha_artista(Artista **ultimo);
 // -----------------REFERENTE A ALBUM-----------------
 
-Album *cria_No_Album(Album **raiz, char titulo[], int anoLancamento, int qtdMusicas);
-Album *rotacao_esquerda_album(Album **raiz);
-Album *rotacao_direita_album(Album **raiz);
+Album *cria_No_Album();
+DadoAlbum *lerDadosAlbum();
+Album *rotacao_esquerda_album(Album *raiz);
+Album *rotacao_direita_album(Album *raiz);
 void troca_Cor_album(Album *raiz);
 Album *balanceia_album(Album *raiz);
-Album *insere_NO_album(Album **raiz, char titulo[], int anoLancamento, int qtdMusicas);
-int insere_RB_album(Album **raiz, char titulo[], int anoLancamento, int qtdMusicas);
+Album *insere_NO_album(Album **raiz, DadoAlbum *dado );
+int insere_RB_album(Album **raiz,DadoAlbum *dado);
 Album *move_esq_red_album(Album *raiz);
 Album *move_dir_red_album(Album *raiz);
 Album *remove_menor_album(Album *raiz);
 Album *procuraMenor_album(Album *atual);
 Album *buscarFolha_album(Album *ultimo);
 Album *remove_NO_album(Album **raiz, char titulo[]);
+int remove_arvRB_Album(Album **raiz, char titulo[]);
+void imprimeAlbum(Album *raiz, int nivel);
 
 // -----------------REFERENTE A MUSICA-----------------
 ListaDupla *inicializarLista(ListaDupla *lista);

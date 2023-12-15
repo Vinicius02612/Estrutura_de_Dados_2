@@ -7,6 +7,7 @@
 
 int main(){
     DadoArtista *dadoArtista = NULL;
+    DadoAlbum *dadoAlb = NULL;
     Artista *artista, *raizArtista ;
     Album *album, *raizAlbum;
     Musica *musica, *raizMusica;
@@ -16,9 +17,10 @@ int main(){
     raizArtista = NULL; raizAlbum = NULL; raizMusica = NULL;
 
     raizArtista = cria_No_Artista();
+    raizAlbum = cria_No_Album();
 
     do{
-        printf("1- Cadastrar Artista\n2- Remover artisa\n3-Cadastrar Musica\n4- Imprime Artista\n");
+        printf("1- Cadastrar Artista\n2- Remover artisa\n3-Cadastrar Album\n4- Remover Album\n4 -  Imprimir tudo \n");
         scanf("%d", &opc);
         switch (opc)
         {
@@ -33,14 +35,22 @@ int main(){
                 scanf("%s", nome_artista);
                 int res = remove_arvRB(&raizArtista, nome_artista);
                 if(res != 0)
-                    printf("no removido com sucesso \n");
-
+                    printf("artista removido com sucesso \n");
                 break;
             case 3:
+                dadoAlb = lerDadosAlbum();
+                msc = insere_RB_album(&raizAlbum, dadoAlb);
                 break;
             case 4:
-                imprimirArtista(raizArtista, 0);
+                printf("Digite o nome do artista \n");
+                scanf("%s", titulo_Alum);
+                int resAlb =  remove_arvRB_Album(&raizAlbum, titulo_Alum);
+                if(resAlb  != 0)
+                    printf("album removido com sucesso \n");
                 break;
+            case 5:
+                imprimirArtista(raizArtista,0);
+                imprimeAlbum(raizAlbum, 0);
         default:
             break;
         }

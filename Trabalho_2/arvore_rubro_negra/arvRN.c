@@ -136,21 +136,21 @@ DadoArtista *lerInformacaoArtista(){
 // lembrar de passar para implementação com ponteiros de ponteiro
 Artista *insere_NO_artista(Artista **raiz, DadoArtista *InfoArtista){
     printf("entro na insere No artista:\n");
-    Artista *status;
     if(*raiz == NULL){
         Artista *novoArtista;
-        (*raiz) = (Artista*)malloc(sizeof(Artista));
+        novoArtista = (Artista*)malloc(sizeof(Artista));
         
 
         printf("passou daqui\n");
-        (*raiz)->info = InfoArtista;
+        novoArtista->info = InfoArtista;
         printf("novo artista recebeu a informação\n");
 
-        (*raiz)->album = NULL;
-        (*raiz)->cor = RED;
-        (*raiz)->dir = NULL;
-        (*raiz)->esq = NULL;
+        novoArtista->album = NULL;
+        novoArtista->cor = RED;
+        novoArtista->dir = NULL;
+        novoArtista->esq = NULL;
 
+        return novoArtista;
 
     }else{
     /* 
@@ -163,11 +163,10 @@ Artista *insere_NO_artista(Artista **raiz, DadoArtista *InfoArtista){
         printf("sera que o erro ta aqui?");
         if(strcmp(InfoArtista->nome_artista, (*raiz)->info->nome_artista) == 0){
             printf("Um os Artista não podem ter nome iguais\n");
-            status = NULL;
         }else{
             if(strcmp(InfoArtista->nome_artista, (*raiz)->info->nome_artista) < 0){
                 (*raiz)->esq = insere_NO_artista(&((*raiz)->esq), InfoArtista);
-            }else{
+            }else if(strcmp(InfoArtista->nome_artista, (*raiz)->info->nome_artista) > 0){
                 (*raiz)->dir = insere_NO_artista(&((*raiz)->dir), InfoArtista);
             }
         }
@@ -206,8 +205,7 @@ int insere_RB(Artista **raiz, DadoArtista *InfoArtista){
 Artista* move_esq_red(Artista *raiz){
     troca_Cor_artista(raiz);
     if (cor(raiz->dir->esq) == RED)
-    {
-            rotacao_direita_artista(raiz);
+    {   
             raiz->dir = rotacao_esquerda_artista(raiz->dir);
             raiz = rotacao_esquerda_artista(raiz);
             troca_Cor_artista(raiz);
@@ -229,6 +227,7 @@ Artista* remove_menor(Artista *raiz){
       if (raiz->esq == NULL)
       {
             free(raiz);
+            return NULL;
       }if (cor(raiz->esq) == BLACK && cor(raiz->esq->esq) == BLACK)
       {
             move_esq_red(raiz);
@@ -369,11 +368,11 @@ DadoAlbum *lerDadosAlbum(){
     strcpy(infoAlbum->titulo,titulo);
 
     printf("Ano de lançamento: \n");
-    scanf("%d", anoLancamento);
+    scanf("%d", &anoLancamento);
     infoAlbum->anoLancamento = anoLancamento;
 
     printf("Quantidade de musicas\n"); // ver uma forma de atualizar esse valor conforme inserir musica
-    scanf("%d", qtdMusicas);
+    scanf("%d", &qtdMusicas);
     infoAlbum->qtdMusicas = qtdMusicas;
 
     return infoAlbum;
@@ -410,47 +409,59 @@ void troca_Cor_album(Album *raiz) {
 }
 
 Album* balanceia_album(Album *raiz) {
-    if (cor_album(raiz->dir) == RED && cor_album(raiz->esq) == BLACK)
-        raiz = rotacao_esquerda_album(&raiz);
-
-    if (cor_album(raiz->esq) == RED && cor_album(raiz->esq->esq) == RED)
-        raiz = rotacao_direita_album(&raiz);
-
-    if (cor_album(raiz->esq) == RED && cor_album(raiz->dir) == RED)
-        troca_Cor_album(raiz);
-
+    
     return raiz;
 }
 
 Album *insere_NO_album(Album **raiz, DadoAlbum *dado) {
-    Album *criou_no = NULL;
+    Album *novoAlbum = NULL;
     if (*raiz == NULL) {
-        criou_no = cria_No_Album(raiz, dado);
-    }
-    if (strcmp((*raiz)->info->titulo, dado->titulo) < 0) {
-        criou_no = insere_NO_album(&((*raiz)->esq), dado);
-    } else if (strcmp((*raiz)->info->titulo,  dado->titulo) > 0) {
-        criou_no = insere_NO_album(&((*raiz)->dir),dado);
-    }
+        novoAlbum = (Album*)malloc(sizeof(Album));
+        novoAlbum->info = dado;
+        novoAlbum->musicas = NULL;
+        novoAlbum->cor = RED;
+        novoAlbum->dir = NULL;
+        novoAlbum->esq = NULL;
 
-    balanceia_album(*raiz);
+        return novoAlbum;
+    }else{
+        if (strcmp((*raiz)->info->titulo, dado->titulo) < 0) {
+            (*raiz)->esq = insere_NO_album(&((*raiz)->esq), dado);
+        } else if (strcmp((*raiz)->info->titulo,  dado->titulo) > 0) {
+            (*raiz)->dir = insere_NO_album(&((*raiz)->dir),dado);
+        }
+    }
+    if (cor_album((*raiz)->dir) == RED && cor_album((*raiz)->esq) == BLACK){
+        (*raiz) = rotacao_esquerda_album((*raiz));
+    }
+        
 
-    return criou_no;
+    if (cor_album((*raiz)->esq) == RED && cor_album((*raiz)->esq->esq) == RED){
+        (*raiz) = rotacao_direita_album((*raiz));
+    }
+        
+
+    if (cor_album((*raiz)->esq) == RED && cor_album((*raiz)->dir) == RED){
+        troca_Cor_album((*raiz));
+    }
+        
+    return *raiz;
 }
 
 int insere_RB_album(Album **raiz, DadoAlbum *dado) {
     int resposta;
     *raiz = insere_NO_album(raiz, dado);
-    if ((*raiz) != NULL)
+    if (*raiz != NULL)
         (*raiz)->cor = BLACK;
+        resposta = 1;
     return resposta;
 }
 
 Album* move_esq_red_album(Album *raiz) {
     troca_Cor_album(raiz);
     if (cor_album(raiz->dir->esq) == RED) {
-        rotacao_direita_album(&(*raiz).dir);
-        rotacao_esquerda_album(&(*raiz).esq);
+        raiz->dir =  rotacao_direita_album(raiz->dir);
+        raiz = rotacao_esquerda_album(raiz);
         troca_Cor_album(raiz);
     }
     return raiz;
@@ -459,7 +470,7 @@ Album* move_esq_red_album(Album *raiz) {
 Album* move_dir_red_album(Album *raiz) {
     troca_Cor_album(raiz);
     if (cor_album(raiz->esq->esq) == RED) {
-        rotacao_direita_album(&raiz);
+        raiz = rotacao_direita_album(raiz);
         troca_Cor_album(raiz);
     }
     return raiz;
@@ -468,12 +479,13 @@ Album* move_dir_red_album(Album *raiz) {
 Album* remove_menor_album(Album *raiz) {
     if (raiz->esq == NULL) {
         free(raiz);
+        return NULL;
     }
     if (cor_album(raiz->esq) == BLACK && cor_album(raiz->esq->esq) == BLACK) {
         raiz = move_esq_red_album(raiz);
     }
 
-    remove_menor_album(raiz->esq);
+    raiz->esq = remove_menor_album(raiz->esq);
     return balanceia_album(raiz);
 }
 
@@ -497,34 +509,65 @@ Album* buscarFolha_album(Album *ultimo) {
 
 Album* remove_NO_album(Album** raiz, char titulo[]) {
     
-    Album *aux, *remove;
-    aux = NULL; remove = NULL;
+    Album *aux;
+    aux = NULL;
 
     if (*raiz != NULL) {
-        if (strcmp((*raiz)->info->titulo, titulo) == 0) {
-            aux = *raiz;
-
-            if ((*raiz)->esq == NULL && (*raiz)->dir == NULL) {
-                free(aux);
-                *raiz = NULL;
-            } else if ((*raiz)->esq == NULL || (*raiz)->dir == NULL) {
-                *raiz = ((*raiz)->esq != NULL) ? (*raiz)->esq : (*raiz)->dir;
-                free(aux);
-            } else {
-                aux = buscarFolha_album((*raiz)->esq);
-                strcpy((*raiz)->info->titulo,aux->titulo);
-                remove_NO_album(&(*raiz)->esq, aux->titulo);
+        if(strcmp(titulo, (*raiz)->info->titulo) < 0){
+            if(cor_album((*raiz)->esq) == BLACK && cor_album((*raiz)->esq->esq) == BLACK){
+                (*raiz) = move_esq_red_album(*raiz);
             }
-        } else if (strcmp((*raiz)->titulo, titulo) < 0) {
-            remove = remove_NO_album(&((*raiz)->dir), titulo);
-        } else if (strcmp((*raiz)->titulo, titulo) > 0) {
-            remove = remove_NO_album(&((*raiz)->esq), titulo);
+            (*raiz)->esq = remove_NO_album((&(*raiz)->esq), titulo);
+        }else{
+            if(cor_album((*raiz)->esq) == RED){
+                (*raiz)= rotacao_direita_album(*raiz);
+            }
+
+            if(strcmp(titulo, (*raiz)->info->titulo) == 0 && (*raiz)->dir == NULL){
+                free(*raiz);
+                return NULL;
+            }
+
+            if(cor_album((*raiz)->dir) == BLACK && cor_album((*raiz)->esq) == BLACK){
+                (*raiz) =  move_dir_red_album(*raiz);
+            }
+            if(strcmp(titulo, (*raiz)->info->titulo) == 0){
+                aux = procuraMenor_album((*raiz)->dir);
+                (*raiz)->info = aux->info;
+                (*raiz)->dir = remove_menor_album((*raiz)->dir);
+            }else{
+                (*raiz)->dir = remove_NO_album(&((*raiz)->dir), titulo);
+            }
         }
     }
 
     balanceia_album(*raiz);
 
     return *raiz;
+}
+int remove_arvRB_Album(Album **raiz, char titulo[]){
+    *raiz = remove_NO_album(raiz, titulo);
+    if(*raiz != NULL){
+        (*raiz)->cor = BLACK;
+        return 1;
+    }else{
+        return 0;
+    }
+}
+
+void imprimeAlbum(Album *raiz, int nivel){
+    if(raiz != NULL){
+        imprimeAlbum(raiz->esq, nivel + 1);
+
+        if((*raiz).cor == RED){
+            printf("\nTitulo:%s \nAno de Lançamento: %d\n Quantidade de Musicas: %d \n",raiz->info->titulo,raiz->info->anoLancamento,raiz->info->qtdMusicas );
+            printf("\n");
+        }else{
+            printf("Titulo:%s \nAno de Lançamento: %d\n Quantidade de Musicas: %d \n",raiz->info->titulo,raiz->info->anoLancamento,raiz->info->qtdMusicas );
+            printf("\n");
+        }
+        imprimeAlbum(raiz->dir, nivel + 1);
+    }
 }
 
 // -----------------REFERENTE A MUSICA-----------------
