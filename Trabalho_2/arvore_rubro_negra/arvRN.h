@@ -22,7 +22,8 @@ Artista* move_esq_red(Artista *raiz);
 Artista* move_dir_red(Artista *raiz);
 Artista* remove_menor(Artista *raiz);
 Artista* procuraMenor(Artista *atual);
-Artista* remove_NO_artista(Artista* raiz, char nome_artista[]);
+Artista* remove_NO_artista(Artista **raiz, char nome_artista[]);
+int remove_arvRB(Artista **raiz, char nome_artista[]);
 void imprimirArtista(Artista *raiz, int nivel);
 Artista* buscarFolha_artista(Artista **ultimo);
 // -----------------REFERENTE A ALBUM-----------------

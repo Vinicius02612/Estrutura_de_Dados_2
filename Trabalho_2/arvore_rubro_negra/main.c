@@ -18,7 +18,7 @@ int main(){
     raizArtista = cria_No_Artista();
 
     do{
-        printf("1- Cadastrar Artista\n2- Cadastrar Album\n3-Cadastrar Musica\n4- Imprime Artista\n");
+        printf("1- Cadastrar Artista\n2- Remover artisa\n3-Cadastrar Musica\n4- Imprime Artista\n");
         scanf("%d", &opc);
         switch (opc)
         {
@@ -26,9 +26,15 @@ int main(){
                 dadoArtista = lerInformacaoArtista();
                 msc = insere_RB(&raizArtista, dadoArtista);
                 if(msc != 0)
-                    printf("inserção arvore realizada com sucesso!");
+                    printf("inserção arvore realizada com sucesso!\n");
                 break;
             case 2:
+                printf("Digite o nome do artista \n");
+                scanf("%s", nome_artista);
+                int res = remove_arvRB(&raizArtista, nome_artista);
+                if(res != 0)
+                    printf("no removido com sucesso \n");
+
                 break;
             case 3:
                 break;
