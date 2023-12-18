@@ -17,7 +17,7 @@ typedef struct arv23_artista{
       Arv23_artista *esq, *dir, *centro;
 }Arv23_artista;
 
-typedef struct {
+typedef struct album{
     char titulo[100];
     int anoLancamento;
     int qtdMusicas;

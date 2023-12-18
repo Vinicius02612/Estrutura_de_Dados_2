@@ -17,7 +17,8 @@ void troca_Cor_artista(Artista *raiz);
 DadoArtista *lerInformacaoArtista();
 Artista *insere_NO_artista(Artista **raiz, DadoArtista *infoArtista);
 int insere_RB(Artista **raiz, DadoArtista *infoAtista);
-
+Artista *  buscaArtista(Artista **raiz, char nome_artista[]);
+Artista *adcionaAlbumEmArtista( Artista *artista,char nome_artista[], Album *album);
 Artista* balanceia_artista(Artista *raiz);
 Artista* move_esq_red(Artista *raiz);
 Artista* move_dir_red(Artista *raiz);
@@ -37,6 +38,8 @@ void troca_Cor_album(Album *raiz);
 Album *balanceia_album(Album *raiz);
 Album *insere_NO_album(Album **raiz, DadoAlbum *dado );
 int insere_RB_album(Album **raiz,DadoAlbum *dado);
+Album *adicionaMusicaAoAlbum( Album *album,char titulo[], ListaDupla *musica);
+Album  *buscaAlbum(Album **raiz, char titulo[]);
 Album *move_esq_red_album(Album *raiz);
 Album *move_dir_red_album(Album *raiz);
 Album *remove_menor_album(Album *raiz);
@@ -47,7 +50,9 @@ int remove_arvRB_Album(Album **raiz, char titulo[]);
 void imprimeAlbum(Album *raiz, int nivel);
 
 // -----------------REFERENTE A MUSICA-----------------
-ListaDupla *inicializarLista(ListaDupla *lista);
-ListaDupla *adicionarMusica(ListaDupla **lista, Musica novaMusica);
+ListaDupla *inicializarLista();
+Musica *lerDadosMusica();
+ListaDupla *removerMusica(ListaDupla **lista, char titulo[]);
+ListaDupla *adicionarMusica(ListaDupla **lista, Musica *novaMusica);
 void imprimirLista(ListaDupla *lista);
 void liberarLista(ListaDupla *lista);

@@ -15,14 +15,6 @@ typedef struct musica {
     int duracao;
 }Musica;
 
-typedef struct listaDupla{
-    Musica *muicas;
-    ListaDupla* anterior;
-    ListaDupla* proximo;
-} ListaDupla;
-
-
-
 typedef struct dadoArtista{
     char nome_artista[50];
     char estilo_musical[50];
@@ -35,9 +27,15 @@ typedef struct dadoAlbum{
     int qtdMusicas;
 }DadoAlbum;
 
+typedef struct listaDupla{
+    Musica *muicas;
+    ListaDupla* anterior;
+    ListaDupla* proximo;
+}ListaDupla;
+
 typedef struct album{
     DadoAlbum *info;
-    Musica *musicas;
+    ListaDupla *musicas;
     int cor;
     Album *esq, *dir;
 } Album;
@@ -68,7 +66,6 @@ Artista *cria_No_Artista(){
 }
 
 Artista* rotacao_esquerda_artista(Artista *raiz){
-    printf("Entrou na rotação para esquerda\n");
       Artista *aux;
 
       aux = raiz->dir;
@@ -101,8 +98,6 @@ void troca_Cor_artista(Artista *raiz){
 }
 
 Artista* balanceia_artista(Artista *raiz){
-
-    printf("Entrou em balancear \n");
     // no vermelho é sempre filho á esquerda
     if(cor(raiz->dir) == RED){
         raiz = rotacao_esquerda_artista(raiz);
@@ -135,16 +130,10 @@ DadoArtista *lerInformacaoArtista(){
 
 // lembrar de passar para implementação com ponteiros de ponteiro
 Artista *insere_NO_artista(Artista **raiz, DadoArtista *InfoArtista){
-    printf("entro na insere No artista:\n");
     if(*raiz == NULL){
         Artista *novoArtista;
         novoArtista = (Artista*)malloc(sizeof(Artista));
-        
-
-        printf("passou daqui\n");
         novoArtista->info = InfoArtista;
-        printf("novo artista recebeu a informação\n");
-
         novoArtista->album = NULL;
         novoArtista->cor = RED;
         novoArtista->dir = NULL;
@@ -160,7 +149,6 @@ Artista *insere_NO_artista(Artista **raiz, DadoArtista *InfoArtista){
      Um valor maior que zero significa que string1 é maior que string2.
     
     */
-        printf("sera que o erro ta aqui?");
         if(strcmp(InfoArtista->nome_artista, (*raiz)->info->nome_artista) == 0){
             printf("Um os Artista não podem ter nome iguais\n");
         }else{
@@ -170,36 +158,46 @@ Artista *insere_NO_artista(Artista **raiz, DadoArtista *InfoArtista){
                 (*raiz)->dir = insere_NO_artista(&((*raiz)->dir), InfoArtista);
             }
         }
-
-        // no vermelho é sempre filho á esquerda
-        if(cor((*raiz)->dir) == RED && cor((*raiz)->esq) == BLACK){
-            (*raiz) = rotacao_esquerda_artista((*raiz));
-        }
-        // Filho e Neto são vermelhos
-        // Filho vira pai de 2 nós vermelhos
-        if(cor((*raiz)->esq) == RED && cor((*raiz)->esq->esq) == RED){
-            (*raiz) = rotacao_direita_artista((*raiz));
-        }
-        // 2 filhos vermelhos troca a cor
-        if(cor((*raiz)->esq) == RED  && cor((*raiz)->dir) == RED){
-            troca_Cor_artista((*raiz));
-        }
-
     }
+    *raiz = balanceia_artista(*raiz);
     return *raiz;
 
 }
 
 int insere_RB(Artista **raiz, DadoArtista *InfoArtista){
     int resposta = 0;
-    printf("Entrou na função de inserir_RB \n");
     *raiz = insere_NO_artista(raiz, InfoArtista);
-    printf("Sainda de inserie RB \n");
     if(*raiz != NULL){
         (*raiz)->cor = BLACK;
         resposta = 1;
     }
     return resposta;
+}
+
+Artista * buscaArtista(Artista **raiz, char nome_artista[]){
+    Artista *achou;
+    achou = NULL;
+    if(*raiz != NULL){
+        if(strcmp(nome_artista, (*raiz)->info->nome_artista) == 0){
+            achou = *raiz;
+        }else{
+            if(strcmp( nome_artista , (*raiz)->info->nome_artista) < 0){
+               achou = buscaArtista(&((*raiz)->esq), nome_artista);
+            }else if(strcmp( nome_artista , (*raiz)->info->nome_artista) > 0){
+               achou = buscaArtista(&((*raiz)->dir), nome_artista);
+            }
+        }
+    }
+    return achou ;
+}
+
+// função que adiciona o album ao artista selecionado pelo nome.
+Artista *adcionaAlbumEmArtista( Artista *artista,char nome_artista[], Album *album){
+    if(artista != NULL){
+        artista->album = album;
+        artista->info->num_albuns += 1;
+    }
+    return artista;
 }
 
 Artista* move_esq_red(Artista *raiz){
@@ -258,51 +256,38 @@ Artista* buscarFolha_artista(Artista **ultimo){
 }
 
 Artista *remove_NO_artista(Artista **raiz, char nome_artista[]){
-    int remove = 0;
-    printf("Ta entrando em remover artista\n");
+    if(*raiz != NULL){
+        if(strcmp(nome_artista, (*raiz)->info->nome_artista) < 0){
+            if(cor((*raiz)->esq) == BLACK && cor((*raiz)->esq->esq) == BLACK){
+                (*raiz) = move_esq_red(*raiz);
 
-    if(strcmp(nome_artista, (*raiz)->info->nome_artista) < 0){ // vai pra esquerda
-        printf("Primeira condição\n");
-
-        if(cor((*raiz)->esq) == BLACK && cor((*raiz)->esq->esq) == BLACK){
-            printf("segunda condição\n");
-
-            (*raiz) = move_esq_red(*raiz);
-
-        }
-        (*raiz)->esq = remove_NO_artista((&(*raiz)->esq), nome_artista);
-    }else{
-        if(cor((*raiz)->esq) == RED){
-            printf("terceira condição\n");
-
-            (*raiz) = rotacao_direita_artista(*raiz);
-        }
-
-        if(strcmp(nome_artista, (*raiz)->info->nome_artista) == 0 && ((*raiz)->dir == NULL)){ // nome iguais
-            printf("quarta condição\n");
-
-            free(*raiz);
-            return NULL;
-        }
-
-        if(cor((*raiz)->dir) == BLACK && cor((*raiz)->esq) == BLACK){
-            printf("quinta condição\n");
-            (*raiz) = move_dir_red(*raiz);
-            printf("Saiu da mode_dir_red\n");
-        }
-        if(strcmp(nome_artista, (*raiz)->info->nome_artista) == 0){// nomes iguais
-            printf("sexta condição\n");
-
-            Artista *aux = procuraMenor((*raiz)->dir);
-            (*raiz)->info = aux->info;
-            (*raiz)->dir = remove_menor((*raiz)->dir);
+            }
+            (*raiz)->esq = remove_NO_artista((&(*raiz)->esq), nome_artista);
         }else{
-            (*raiz)->dir = remove_NO_artista(&((*raiz)->dir), nome_artista);
+            if(cor((*raiz)->esq) == RED){
+                (*raiz) = rotacao_direita_artista(*raiz);
+            }
+
+            if(strcmp(nome_artista, (*raiz)->info->nome_artista) == 0 && ((*raiz)->dir == NULL)){ 
+                free(*raiz);
+                return NULL;
+            }
+
+            if(cor((*raiz)->dir) == BLACK && cor((*raiz)->esq) == BLACK){
+                (*raiz) = move_dir_red(*raiz);
+            }
+            if(strcmp(nome_artista, (*raiz)->info->nome_artista) == 0){
+                Artista *aux = procuraMenor((*raiz)->dir);
+                (*raiz)->info = aux->info;
+                (*raiz)->dir = remove_menor((*raiz)->dir);
+            }else{
+                (*raiz)->dir = remove_NO_artista(&((*raiz)->dir), nome_artista);
+            }
+
         }
-
+    }else{
+        printf("Arvore vazia\n");
     }
-    printf("Saiu condição");
-
     *raiz = balanceia_artista(*raiz);
     return  *raiz;
 }
@@ -329,6 +314,7 @@ void imprimirArtista(Artista *raiz, int nivel){
         }else{
             printf("Nome artista:%s \nEstilo musical: %s\n Quantidade de Albuns: %d \n",raiz->info->nome_artista,raiz->info->estilo_musical,raiz->info->num_albuns );
             printf("\n");
+            if(raiz->album);
         }
         imprimirArtista(raiz->dir, nivel + 1);
     }
@@ -370,10 +356,7 @@ DadoAlbum *lerDadosAlbum(){
     printf("Ano de lançamento: \n");
     scanf("%d", &anoLancamento);
     infoAlbum->anoLancamento = anoLancamento;
-
-    printf("Quantidade de musicas\n"); // ver uma forma de atualizar esse valor conforme inserir musica
-    scanf("%d", &qtdMusicas);
-    infoAlbum->qtdMusicas = qtdMusicas;
+    infoAlbum->qtdMusicas = 0;
 
     return infoAlbum;
 }
@@ -408,13 +391,26 @@ void troca_Cor_album(Album *raiz) {
     }
 }
 
-Album* balanceia_album(Album *raiz) {
-    
+Album *balanceia_album(Album *raiz){
+     if (cor_album(raiz->dir) == RED && cor_album(raiz->esq) == BLACK){
+        raiz = rotacao_esquerda_album(raiz);
+    }
+        
+
+    if (cor_album(raiz->esq) == RED && cor_album(raiz->esq->esq) == RED){
+        raiz = rotacao_direita_album(raiz);
+    }
+        
+
+    if (cor_album(raiz->esq) == RED && cor_album(raiz->dir) == RED){
+        troca_Cor_album(raiz);
+    }
+        
     return raiz;
 }
 
 Album *insere_NO_album(Album **raiz, DadoAlbum *dado) {
-    Album *novoAlbum = NULL;
+    Album *novoAlbum;
     if (*raiz == NULL) {
         novoAlbum = (Album*)malloc(sizeof(Album));
         novoAlbum->info = dado;
@@ -431,19 +427,8 @@ Album *insere_NO_album(Album **raiz, DadoAlbum *dado) {
             (*raiz)->dir = insere_NO_album(&((*raiz)->dir),dado);
         }
     }
-    if (cor_album((*raiz)->dir) == RED && cor_album((*raiz)->esq) == BLACK){
-        (*raiz) = rotacao_esquerda_album((*raiz));
-    }
-        
-
-    if (cor_album((*raiz)->esq) == RED && cor_album((*raiz)->esq->esq) == RED){
-        (*raiz) = rotacao_direita_album((*raiz));
-    }
-        
-
-    if (cor_album((*raiz)->esq) == RED && cor_album((*raiz)->dir) == RED){
-        troca_Cor_album((*raiz));
-    }
+    
+    *raiz = balanceia_album(*raiz);
         
     return *raiz;
 }
@@ -455,6 +440,31 @@ int insere_RB_album(Album **raiz, DadoAlbum *dado) {
         (*raiz)->cor = BLACK;
         resposta = 1;
     return resposta;
+}
+
+Album  *buscaAlbum(Album **raiz, char titulo[]){
+    Album *achou;
+    achou = NULL;
+    if(*raiz != NULL){
+        if(strcmp(titulo, (*raiz)->info->titulo) == 0){
+            achou = *raiz;
+        }else{
+            if(strcmp( titulo , (*raiz)->info->titulo) < 0){
+               achou = buscaAlbum(&((*raiz)->esq), titulo);
+            }else if(strcmp( titulo , (*raiz)->info->titulo) > 0){
+               achou = buscaAlbum(&((*raiz)->dir), titulo);
+            }
+        }
+    }
+    return achou ;
+}
+
+Album *adicionaMusicaAoAlbum( Album *album,char titulo[], ListaDupla *musica){
+    if(album != NULL){
+        album->musicas = musica;
+        album->info->qtdMusicas += 1;
+    }
+    return album;
 }
 
 Album* move_esq_red_album(Album *raiz) {
@@ -565,6 +575,9 @@ void imprimeAlbum(Album *raiz, int nivel){
         }else{
             printf("Titulo:%s \nAno de Lançamento: %d\n Quantidade de Musicas: %d \n",raiz->info->titulo,raiz->info->anoLancamento,raiz->info->qtdMusicas );
             printf("\n");
+            if(raiz->musicas != NULL){
+                imprimirLista(raiz->musicas->muicas);
+            }
         }
         imprimeAlbum(raiz->dir, nivel + 1);
     }
@@ -573,7 +586,9 @@ void imprimeAlbum(Album *raiz, int nivel){
 // -----------------REFERENTE A MUSICA-----------------
 
 
-ListaDupla *inicializarLista(ListaDupla* lista) {
+ListaDupla *inicializarLista() {
+    ListaDupla *lista;
+    lista = (ListaDupla*)malloc(sizeof(ListaDupla));
     lista->muicas = NULL;
     lista->anterior = NULL;
     lista->proximo = NULL;
@@ -581,13 +596,29 @@ ListaDupla *inicializarLista(ListaDupla* lista) {
 
 }
 
-ListaDupla *adicionarMusica(ListaDupla **lista, Musica novaMusica) {
+Musica *lerDadosMusica(){
+    Musica *msc;
+    msc = (Musica*)malloc(sizeof(Musica));
+    char nome_musica[50];
+    int duracao;
+    printf("Nome da musica: \n");
+    scanf("%s", nome_musica);
+    strcpy(msc->titulo, nome_musica );
+    printf("Duração: \n");
+    scanf("%d", &duracao);
+    msc->duracao = duracao;
+
+    return msc;
+    
+}
+
+
+ListaDupla *adicionarMusica(ListaDupla **lista, Musica *novaMusica) {
     ListaDupla *novoNo = (ListaDupla *)malloc(sizeof(ListaDupla));
 
     if(novoNo!= NULL){
 
-        novoNo->muicas->duracao = novaMusica.duracao;
-        strcpy(novoNo->muicas->titulo, novaMusica.titulo);
+        novoNo->muicas = novaMusica;
         novoNo->proximo = NULL;
 
         if(*lista == NULL){
@@ -610,18 +641,49 @@ ListaDupla *adicionarMusica(ListaDupla **lista, Musica novaMusica) {
 }
 
 
-// Função para imprimir todas as músicas na lista
-void imprimirLista(ListaDupla *lista) {
-    ListaDupla *aux = lista;
-    if (lista == NULL) {
-        printf("Lista vazia.\n");
-        return;
+ListaDupla *removerMusica(ListaDupla **lista, char titulo[]){
+    ListaDupla *aux, *remove;
+    remove = NULL;
+
+    if(*lista != NULL){
+        if(strcmp((*lista)->muicas->titulo, titulo) == 0){
+            remove = *lista;
+            *lista = remove->proximo;
+            (*lista)->anterior = NULL;
+        }else{
+            aux = *lista;
+            while (aux->proximo != NULL && strcmp((*lista)->muicas->titulo, titulo) != 0)
+            {
+               aux = aux->proximo;
+            }
+            if(aux->proximo){
+                remove = aux->proximo;
+                aux->proximo = remove->proximo;
+                aux->proximo->anterior = aux;
+            }
+            
+        }
     }
 
-    while (aux->proximo != NULL) {
-        printf("Título: %s, Duração: %d\n",aux->muicas->titulo, aux->muicas->duracao);
-        aux = aux->proximo;
+    return remove;
+}
+
+
+// Função para imprimir todas as músicas na lista
+void imprimirLista(ListaDupla *lista) {
+    ListaDupla *aux;
+    aux = lista;
+    printf("informações da musica \n");
+    if(lista != NULL){
+        while (aux != NULL) {
+            printf("Título: %s, Duração: %d min\n",aux->muicas->titulo, aux->muicas->duracao);
+            aux = aux->proximo;
+        }
+        printf("\n\n");
+    }else{
+        printf("Nenhuma musica foi adicionada");
     }
+  
 }
 
 // Função para liberar a memória alocada para a lista
