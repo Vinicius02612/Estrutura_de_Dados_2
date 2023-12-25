@@ -16,7 +16,3 @@ Arv23_artista *adiciona_No_artista(Arv23_artista *raiz, char nome_artista[], Arv
 void RemoveMaiorInfoEsq(Arv23_artista **RaizArv23, Arv23_artista **PaiMaior, Arv23_artista **MaiorInfoRemove, int LocalInfo, char *Situacao);
 void RemoveArtista23(Arv23_artista **RaizArv23, Arv23_artista **Pai, char *NomeArtista, int LinhaArtista, char *Situacao);
 void RedistribuiArv23Artista(Arv23_artista **RaizArv23, Arv23_artista **Pai);
-
-// -----------------REFERENTE A ALBUM-----------------
-
-// -----------------REFERENTE A MUSICA-----------------
