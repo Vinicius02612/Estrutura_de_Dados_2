@@ -32,9 +32,9 @@ int main(){
                 "4 - Remover Artista\n"
                 "5 - Remover Album\n"
                 "6 - Remover Musica\n"
-                "7 - Imprimir Artista\n"
-                "8 - Imprimir Album\n"
-                "9 - Imprimir Musica\n"
+                "7 - Buscar Artista\n"
+                "8 - Buscar Album\n"
+                "9 - Buscar Musica\n"
 
             );
         scanf("%d", &opc);
@@ -61,7 +61,7 @@ int main(){
                     printf("Não existe nenhum artista cadastrado com esse nome\n");
                 }
                 break;
-            case 3:// cadastrar musica0  
+            case 3:// cadastrar musica 
                 // função para inserir musica, musica so deve ser inserida se houver musica cadastrada
                 printf("Digite o titulo do album para qual deseja cadastrar uma musica \n"); // ver uma forma de ligar musica ao album
                 scanf("%s", titulo_Alum);
@@ -78,7 +78,7 @@ int main(){
                 }
                 break;
             case 4: // remover um artista
-                 printf("Digite o nome do artista \n");
+                printf("Digite o nome do artista \n");
                 scanf("%s", nome_artista);
                 res = remove_arvRB(&raizArtista, nome_artista);
                 if(res != 0)
@@ -99,11 +99,26 @@ int main(){
                     printf("Musica removida com sucesso");
                 }
                 break;
-            case 7:
-                imprimirArtista(raizArtista, 0);
+            case 7: // Buscar artista
+                printf("Digite o nome do artista para qual deseja\n");
+                scanf("%s", nome_artista);
+                
+                bscArtista = buscaArtista(&raizArtista, nome_artista);
+                if(bscArtista != NULL){
+                    imprimirArtista(bscArtista, 0);
+                }else{
+                    printf("Não existe nenhum artista cadastrado com esse nome\n");
+                }
                 break;
             case 8:
-                imprimeAlbum(raizAlbum, 0);
+                printf("Digite o titulo do album para qual deseja \n"); // ver uma forma de ligar musica ao album
+                scanf("%s", titulo_Alum);
+                busca = buscaAlbum(&raizAlbum, titulo_Alum);
+                if(busca != NULL){
+                    imprimeAlbum(busca,0);
+                }else{
+                    printf("Não existe nenhum album cadastrado com esse nome\n");
+                }
                 break;
             case 9:
                 imprimirLista(listaDupMusica);

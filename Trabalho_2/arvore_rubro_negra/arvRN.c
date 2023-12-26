@@ -314,7 +314,9 @@ void imprimirArtista(Artista *raiz, int nivel){
         }else{
             printf("Nome artista:%s \nEstilo musical: %s\n Quantidade de Albuns: %d \n",raiz->info->nome_artista,raiz->info->estilo_musical,raiz->info->num_albuns );
             printf("\n");
-            if(raiz->album);
+            if(raiz->album != NULL){
+                imprimeAlbum(raiz->album, 0);
+            }
         }
         imprimirArtista(raiz->dir, nivel + 1);
     }
@@ -576,7 +578,7 @@ void imprimeAlbum(Album *raiz, int nivel){
             printf("Titulo:%s \nAno de Lançamento: %d\n Quantidade de Musicas: %d \n",raiz->info->titulo,raiz->info->anoLancamento,raiz->info->qtdMusicas );
             printf("\n");
             if(raiz->musicas != NULL){
-                imprimirLista(raiz->musicas->muicas);
+                imprimirLista(raiz->musicas);
             }
         }
         imprimeAlbum(raiz->dir, nivel + 1);
