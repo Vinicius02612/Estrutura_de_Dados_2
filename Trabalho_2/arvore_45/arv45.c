@@ -1,120 +1,199 @@
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "arv45.h"
 
-struct info {
+typedef struct info {
     int inicio, fim;
     char status;
-};
+}Info;
 
-struct arv45 {
+typedef struct arv45 {
     struct info *Info1, *Info2, *Info3, *Info4;
     int NInfos;
     struct arv45 *esq, *cen1, *cen2, *cen3, *dir;
-};
+}Arv45;
 
-struct arv45 *criaNo(struct info *Info1, struct info *Info2, struct info *Info3, struct info *Info4, struct arv45 *FEsq, struct arv45 *FCen1, struct arv45 *FCen2, struct arv45 *FCen3, struct arv45 *FDir) {
-    struct arv45 *No;
-    No = (struct arv45 *)malloc(sizeof(struct arv45));
 
-    No->Info1 = Info1;
-    No->Info2 = Info2;
-    No->Info3 = Info3;
-    No->Info4 = Info4;
-    No->NInfos = 4;
-    No->esq = FEsq;
-    No->cen1 = FCen1;
-    No->cen2 = FCen2;
-    No->cen3 = FCen3;
-    No->dir = FDir;
-
-    return No;
+Info *criaInfo(int inicio, int fim, char status) {
+    Info *info = (Info*)malloc(sizeof(Info));
+    info->inicio = inicio;
+    info->fim = fim;
+    info->status = status;
+    return info;
 }
 
-int ehFolha(struct arv45 *Raiz){
-  int folha = 0;
-  if(Raiz->esq == NULL)
-    folha = 1;
-  return folha;  
+Arv45 *criaNo(Info *info, Arv45 *NoEsq, Arv45 *noCentroEsq) {
+    Arv45 *no = (Arv45*)malloc(sizeof(Arv45));
+    no->Info1 = info;
+    no->NInfos = 1;
+    no->esq = NoEsq;
+    no->cen1 = noCentroEsq;
+    no->cen2 = NULL;
+    no->cen3 = NULL;
+    no->dir = NULL;
+    return no;
 }
 
-struct arv45 *adicionaNo(struct arv45 *No, struct info *Info, struct arv45 *Filho1,struct arv45 *Filho2, struct arv45 *Filho3, struct arv45 *Filho4) {
-
-    if (Info->inicio > No->Info1->fim) {
-        No->Info4 = Info;
-        No->dir = Filho4;
-    } else if (Info->inicio > No->Info2->fim) {
-        No->Info4 = No->Info3;
-        No->dir = No->cen3;
-        No->Info3 = No->Info2;
-        No->cen3 = No->cen2;
-        No->Info2 = Info;
-        No->cen2 = Filho4;
-    } else if (Info->inicio > No->Info3->fim) {
-        No->Info4 = No->Info3;
-        No->dir = No->cen3;
-        No->Info3 = Info;
-        No->cen3 = Filho4;
-    } else {
-        No->Info4 = No->Info3;
-        No->dir = No->cen3;
-        No->Info3 = No->Info2;
-        No->cen3 = No->cen2;
-        No->Info2 = No->Info1;
-        No->cen2 = No->cen1;
-        No->Info1 = Info;
-        No->cen1 = Filho4;
-    }
-
-    No->NInfos = 4;
-
-    return No;
+int ehFolha(Arv45 *no) {
+    return (no->esq == NULL);
 }
 
-void quebraNo(struct arv45 **No, struct info *Info, struct arv45 *FilhoMaior, struct info **Sobe, struct arv45 **Novo) {
-    if (Info->fim < (*No)->Info1->inicio) {
-        *Sobe = (*No)->Info1;
-        *Novo = criaNo((*No)->Info1, (*No)->Info2, (*No)->Info3, (*No)->Info4, (*No)->esq, (*No)->cen1, (*No)->cen2, (*No)->cen3, (*No)->dir);
-        (*No)->Info1 = Info;
-        (*No)->cen1 = FilhoMaior;
-        (*No)->Info2 = NULL;
-        (*No)->Info3 = NULL;
-        (*No)->Info4 = NULL;
-        (*No)->cen2 = NULL;
-        (*No)->cen3 = NULL;
-        (*No)->dir = NULL;
-        (*No)->NInfos = 1;
-    } else if (Info->fim < (*No)->Info2->inicio) {
-        *Sobe = Info;
-        *Novo = criaNo((*No)->Info1, (*No)->Info2, (*No)->Info3, (*No)->Info4, (*No)->esq, FilhoMaior, (*No)->cen2, (*No)->cen3, (*No)->dir);
-        (*No)->cen1 = FilhoMaior;
-        (*No)->Info2 = NULL;
-        (*No)->Info3 = NULL;
-        (*No)->Info4 = NULL;
-        (*No)->cen2 = NULL;
-        (*No)->cen3 = NULL;
-        (*No)->dir = NULL;
-        (*No)->NInfos = 1;
-    } else if (Info->fim < (*No)->Info3->inicio) {
-        *Sobe = (*No)->Info2;
-        *Novo = criaNo((*No)->Info1, (*No)->Info2, (*No)->Info3, (*No)->Info4, NULL, FilhoMaior, (*No)->cen3, NULL, (*No)->dir);
-        (*No)->Info2 = Info;
-        (*No)->Info3 = NULL;
-        (*No)->Info4 = NULL;
-        (*No)->cen2 = FilhoMaior;
-        (*No)->cen3 = NULL;
-        (*No)->dir = NULL;
+void adicionaNo(Arv45 **No, Info *info, Arv45 *filho) {
+    if ((*No)->NInfos == 1) {
+        if (info->inicio > (*No)->Info1->inicio) {
+            (*No)->Info2 = info;
+            (*No)->cen2 = filho;
+        } else {
+            (*No)->Info2 = (*No)->Info1;
+            (*No)->Info1 = info;
+            (*No)->cen2 = (*No)->cen1;
+            (*No)->cen1 = filho;
+        }
         (*No)->NInfos = 2;
+    } else if ((*No)->NInfos == 2) {
+        if (info->inicio > (*No)->Info2->inicio) {
+            (*No)->Info3 = info;
+            (*No)->cen3 = filho;
+        } else if (info->inicio > (*No)->Info1->inicio && info->inicio < (*No)->Info2->inicio) {
+            (*No)->Info3 = (*No)->Info2;
+            (*No)->Info2 = info;
+            (*No)->cen3 = (*No)->cen2;
+            (*No)->cen2 = filho;
+        } else {
+            (*No)->Info3 = (*No)->Info2;
+            (*No)->Info2 = (*No)->Info1;
+            (*No)->Info1 = info;
+            (*No)->cen3 = (*No)->cen2;
+            (*No)->cen2 = (*No)->cen1;
+            (*No)->cen1 = filho;
+        }
+        (*No)->NInfos = 3;
     } else {
-        *Sobe = (*No)->Info2;
-        *Novo = criaNo(Info, (*No)->Info1, (*No)->Info3, (*No)->Info4, (*No)->esq, FilhoMaior, (*No)->cen2, (*No)->cen3, (*No)->dir);
-        (*No)->Info2 = (*No)->Info1;
-        (*No)->Info3 = NULL;
-        (*No)->Info4 = NULL;
-        (*No)->cen2 = (*No)->cen1;
-        (*No)->cen3 = NULL;
-        (*No)->dir = NULL;
-        (*No)->NInfos = 2;
+        if (info->inicio > (*No)->Info3->inicio) {
+            (*No)->Info4 = info;
+            (*No)->dir = filho;
+        } else if (info->inicio > (*No)->Info2->inicio && info->inicio < (*No)->Info3->inicio) {
+            (*No)->Info4 = (*No)->Info3;
+            (*No)->Info3 = info;
+            (*No)->dir = (*No)->cen3;
+            (*No)->cen3 = filho;
+        } else if (info->inicio > (*No)->Info1->inicio && info->inicio < (*No)->Info2->inicio) {
+            (*No)->Info4 = (*No)->Info3;
+            (*No)->Info3 = (*No)->Info2;
+            (*No)->Info2 = info;
+            (*No)->dir = (*No)->cen3;
+            (*No)->cen3 = (*No)->cen2;
+            (*No)->cen2 = filho;
+        } else {
+            (*No)->Info4 = (*No)->Info3;
+            (*No)->Info3 = (*No)->Info2;
+            (*No)->Info2 = (*No)->Info1;
+            (*No)->Info1 = info;
+            (*No)->dir = (*No)->cen3;
+            (*No)->cen3 = (*No)->cen2;
+            (*No)->cen2 = (*No)->cen1;
+            (*No)->cen1 = filho;
+        }
+        (*No)->NInfos = 4;
     }
 }
+
+Arv45 *quebraNo(Arv45 **raiz, Info *info, Info **sobe, Arv45 *filho) {
+    Arv45 *maiorNo;
+
+    if (info->inicio > (*raiz)->Info4->inicio) {
+        *sobe = (*raiz)->Info3;
+        maiorNo = criaNo((*raiz)->Info4, (*raiz)->cen3, (*raiz)->dir);
+        maiorNo->Info2 = info;
+        maiorNo->cen2 = filho;
+        maiorNo->NInfos = 2;
+    } else if (info->inicio > (*raiz)->Info3->inicio) {
+        *sobe = (*raiz)->Info3;
+        maiorNo = criaNo(info, (*raiz)->cen3, filho);
+        maiorNo->Info2 = (*raiz)->Info4;
+        maiorNo->cen2 = (*raiz)->dir;
+        maiorNo->NInfos = 2;
+    } else if (info->inicio > (*raiz)->Info2->inicio) {
+        *sobe = info;
+        maiorNo = criaNo((*raiz)->Info3, (*raiz)->cen2, (*raiz)->cen3);
+        maiorNo->Info2 = (*raiz)->Info4;
+        maiorNo->cen2 = (*raiz)->dir;
+        maiorNo->NInfos = 2;
+    } else if (info->inicio > (*raiz)->Info1->inicio) {
+        *sobe = (*raiz)->Info2;
+        maiorNo = criaNo((*raiz)->Info3, (*raiz)->cen2, (*raiz)->cen3);
+        maiorNo->Info2 = (*raiz)->Info4;
+        maiorNo->cen2 = (*raiz)->dir;
+        maiorNo->NInfos = 2;
+        (*raiz)->Info2 = info;
+        (*raiz)->cen2 = filho;
+    } else {
+        *sobe = (*raiz)->Info2;
+        maiorNo = criaNo((*raiz)->Info3, (*raiz)->cen2, (*raiz)->cen3);
+        maiorNo->Info2 = (*raiz)->Info4;
+        maiorNo->cen2 = (*raiz)->dir;
+        maiorNo->NInfos = 2;
+        (*raiz)->Info2 = (*raiz)->Info1;
+        (*raiz)->cen2 = (*raiz)->cen1;
+        (*raiz)->Info1 = info;
+        (*raiz)->cen1 = filho;
+    }
+
+    (*raiz)->NInfos = 2;
+    (*raiz)->cen3 = NULL;
+    (*raiz)->dir = NULL;
+
+    (*raiz)->Info3 = NULL;
+    (*raiz)->Info4 = NULL;
+
+    return maiorNo;
+}
+
+Arv45 *inserir45(Arv45 **raiz, Arv45 *pai, Info **sobe, int inicio, int fim, char status, int *flag) {
+    Arv45 *maiorNO;
+    maiorNO = NULL;
+
+    if (*raiz == NULL) {
+        *raiz = criaNo(criaInfo(inicio, fim, status), NULL, NULL);
+        *flag = 1; // informa que foi inserido
+    } else {
+        if (ehFolha(*raiz)) {
+            *flag = 1; // informa que foi inserido
+            if ((*raiz)->NInfos < 2) {
+                adicionaNo(raiz, criaInfo(inicio, fim, status), NULL);
+                maiorNO = NULL;
+            } else {
+                maiorNO = quebraNo(raiz, criaInfo(inicio, fim, status), sobe, NULL);
+
+                if (pai == NULL) {
+                    *raiz = criaNo(*sobe, *raiz, maiorNO);
+                    maiorNO = NULL;
+                }
+            }
+        } else {
+            if (inicio < (*raiz)->Info1->inicio)
+                maiorNO = inserir45(&((*raiz)->esq), *raiz, sobe, inicio, fim, status, flag);
+            else if ((*raiz)->NInfos == 1 || ((*raiz)->NInfos <= 2 && inicio < (*raiz)->Info2->inicio))
+                maiorNO = inserir45(&((*raiz)->cen1), *raiz, sobe, inicio, fim, status, flag);
+            else if (((*raiz)->NInfos == 2) || ((*raiz)->NInfos <= 2 && inicio < (*raiz)->Info3->inicio))
+                maiorNO = inserir45(&((*raiz)->cen2), *raiz, sobe, inicio, fim, status, flag);
+            else
+                maiorNO = inserir45(&((*raiz)->dir), *raiz, sobe, inicio, fim, status, flag);
+
+            if (maiorNO) {
+                if ((*raiz)->NInfos < 2) {
+                    adicionaNo(raiz, *sobe, maiorNO);
+                    maiorNO = NULL;
+                } else {
+                    maiorNO = quebraNo(raiz, *sobe, sobe, maiorNO);
+
+                    if (pai == NULL) {
+                        *raiz = criaNo(*sobe, *raiz, maiorNO);
+                        maiorNO = NULL;
+                    }
+                }
+            }
+        }
+    }
+    return maiorNO;
+}
+
