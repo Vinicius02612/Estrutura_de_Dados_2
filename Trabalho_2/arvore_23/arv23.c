@@ -5,16 +5,16 @@
 #include "arv23.h"
 
 typedef struct artista{
-      char nome_artista[50];
-      char estilo_musical[50];
-      int num_albuns;
-      Album *album;
+    char nome_artista[50];
+    char estilo_musical[50];
+    int num_albuns;
+    Album *album;
 } Artista;
 
 typedef struct arv23_artista{
-      Artista *info1, *info2;
-      int numinfo;
-      Arv23_artista *esq, *dir, *centro;
+    Artista *info1, *info2;
+    int numinfo;
+    Arv23_artista *esq, *dir, *centro;
 }Arv23_artista;
 
 typedef struct album{
@@ -24,13 +24,13 @@ typedef struct album{
     Musica *musicas;
 } Album;
 
-typedef struct Arv23_album{
+typedef struct arv23_album{
       Album info1, info2;
       int numinfo;
       Arv23_album *esq, *dir, *centro;
 } Arv23_album;
 
-typedef struct Musica {
+typedef struct musica {
     char titulo[100];
     int duracao;
     Musica* proximo;
@@ -42,41 +42,62 @@ typedef struct listaDupla{
     Musica* fim;
 } ListaDupla;
 
-Arv23_artista *cria_NO_Artista(Arv23_artista *no, Arv23_artista *esq, Arv23_artista *dir, Arv23_artista *centro){
-      Arv23_artista *new;
-      new = (Arv23_artista *)malloc(sizeof(Arv23_artista));
-      if (new == NULL)
-      {
-            return NULL;
-      }
-      new->info1 = (Artista *)malloc(sizeof(Artista));
-      new->info2 = (Artista *)malloc(sizeof(Artista));
-      new->info1 = NULL;
-      new->info2 = NULL;
-      new->esq = esq;
-      new->dir = dir;
-      new->centro = centro;
-      new->numinfo = 1;
 
-      return new;
+Artista *lerDadosArtista(){
+    // essa função retorna um os dados do artista preechidos para inserir na arvore
+    Artista *dado;
+    char nome[50], estilo[50];
+    int num_albuns;
+    dado = (Artista*)malloc(sizeof(Artista));
+
+    printf("Nome: \n");
+    scanf("%s", nome);
+    strcpy(dado->nome_artista, nome);
+    printf("Estilo Musical: \n");
+    scanf("%s", estilo);
+    strcpy(dado->estilo_musical, estilo);
+    dado->album = NULL;
+    num_albuns = 0;
+
+    return dado;
 }
 
-Arv23_artista *quebra_no(Arv23_artista **no, char nome_artista[], char sobe[], Arv23_artista *filho){
+Arv23_artista *cria_NO_Artista(Artista *info, Arv23_artista *esq, Arv23_artista *dir, Arv23_artista *centro){
+    printf("Entrou aqui na criar no \n");
+    Arv23_artista *new;
+    new = (Arv23_artista*)malloc(sizeof(Arv23_artista));
+    if(new != NULL){
+        new->info1 = info;
+        new->info2 = NULL;
+        new->esq = esq;
+        new->dir = dir;
+        new->centro = centro;
+        new->numinfo = 1;
+    }
+    
+
+    return new;
+}
+
+Arv23_artista *quebra_no(Arv23_artista **no, Artista *info, Artista *sobe, Arv23_artista *filho){
+    // Aqui ao invés de passar somente o nome do artista para realizar as comparações, passei a informação em si (info)
+    //Dessa forma eu posso adicionar a estrutura info de artista no novo nó
+    //O código anterior  estava passando apenas o nome do artista, sem o resto das informações
       Arv23_artista *new = NULL;
 
-      if (strcmp(nome_artista, (*no)->info1->nome_artista) > 0)
+      if (strcmp(info->nome_artista, (*no)->info1->nome_artista) > 0)
       {
-            strcpy(sobe,nome_artista);
+            sobe = info; // a informação sobre por inteira, e não apenas o nome do artista
             new = cria_NO_Artista((*no)->info2, filho, (*no)->dir, NULL);
-      } else if (strcmp(nome_artista, (*no)->info2->nome_artista) > 0)
+      } else if (strcmp(info->nome_artista, (*no)->info2->nome_artista) > 0)
       {
-            strcpy(sobe, (*no)->info2);
-            new = cria_NO_Artista(nome_artista, (*no)->dir, filho, NULL);
+            sobe = (*no)->info2;
+            new = cria_NO_Artista(info, (*no)->dir, filho, NULL); // cria um no para o info de artista e não apenas o nome
       }else
       {
-            strcpy(sobe, (*no)->info1);
+            sobe = (*no)->info1;
             new = cria_NO_Artista((*no)->info2, (*no)->centro, (*no)->dir, NULL);
-            strcpy((*no)->info1, nome_artista);
+            (*no)->info1 = info;
             (*no)->centro = filho;
       }
 
@@ -94,89 +115,78 @@ Arv23_artista *eh_folha_artista(Arv23_artista *raiz){
       return NULL;
 }
 
-Arv23_artista *adiciona_No_artista(Arv23_artista *raiz, char nome_artista[], Arv23_artista *filho_dir){
-      if(strcmp(nome_artista,raiz->info1->estilo_musical) < 0){
-            raiz->info1 = raiz->info2;
-            strcpy(raiz->info2, raiz->info1);
-            strcpy(raiz->info1->nome_artista, nome_artista);
-            raiz->dir = raiz->centro;
-            raiz->centro = raiz->dir;
+ void adiciona_No_artista(Arv23_artista **raiz, Artista *info, Arv23_artista *filho_dir){
+      if(strcmp(info->nome_artista,(*raiz)->info1->nome_artista) < 0){
+            (*raiz)->info2 = (*raiz)->info1;
+            (*raiz)->info1 = info;
+            (*raiz)->dir = (*raiz)->centro;
+            (*raiz)->centro = (*raiz)->dir;
       }else
       {
-            strcpy(raiz->info2->nome_artista, nome_artista);
-            raiz->dir = filho_dir;
+            (*raiz)->info2 = info;
+            (*raiz)->dir = filho_dir;
       }
-      raiz->numinfo = 2;
-
-      return raiz;
+      (*raiz)->numinfo = 2;
 }
 
-Arv23_artista *insere_no_artista(Arv23_artista **raiz, char nome_artista[], Arv23_artista *pai, char sobe[]){
-
-      Arv23_artista *maior_no = NULL;
-
-      if (raiz != NULL)
-            cria_NO_Artista(&(*raiz), NULL, NULL, NULL);
-      else
-      {
-            if (eh_folha_artista(*raiz))
-            {
-                  if((*raiz)->numinfo == 1){
-                        *raiz = adiciona_No_artista(*raiz, nome_artista, NULL);
-                        maior_no = NULL;
-                  }else
-                  {
-                        maior_no = quebra_no_artista(raiz, nome_artista, sobe, NULL);
-                        if (pai == NULL)
-                        {
-                              *raiz = cria_NO_Artista(sobe,*raiz, maior_no, NULL);
-                              maior_no = NULL;
-                        }
-                  }
+Arv23_artista *insere_no_artista(Arv23_artista **raiz, Artista *info, Arv23_artista *pai, Artista *sobe){
+    printf("Entrou aqui na insere artista \n");
+    Arv23_artista *maior_no = NULL;
+    
+    if (*raiz == NULL){
+        printf("Condição de primeiro elemento \n");
+        *raiz = cria_NO_Artista(info, NULL, NULL, NULL);
+        if(*raiz != NULL){
+                printf("No criado com sucesso! \n");
+        }
+    }else{
+        if (eh_folha_artista(*raiz) != NULL){
+            if((*raiz)->numinfo == 1){
+                adiciona_No_artista(raiz, info, NULL);
+                maior_no = NULL;
+            }else{
+                maior_no = quebra_no(raiz, info, sobe, NULL);
+                if (pai == NULL){
+                    *raiz = cria_NO_Artista(sobe,*raiz, maior_no, NULL);
+                    maior_no = NULL;
+                }
             }
-            else
-            {
-                  if (strcmp(nome_artista, (*raiz)->info1->nome_artista) < 0)
-                  {
-                        maior_no = insere_no_artista(&((*raiz)->esq), nome_artista, *raiz, sobe);
-                  }else if ((*raiz)->numinfo == 1 || (*raiz)->numinfo == 2 && (strcmp(nome_artista, (*raiz)->info2->nome_artista) < 0))
-                  {
-                        maior_no = insere_no((&(*raiz)->centro), nome_artista, *raiz, sobe);
-                  }else
-                  {
-                        maior_no = insere_no((&(*raiz)->dir), nome_artista, *raiz, sobe);
-                  }
+        }else{ // da erro quando vai inserir uma terceira pessoa na arvore
+            if (strcmp(info->nome_artista, (*raiz)->info1->nome_artista) < 0) {
+                // se o nome do artista a ser inserido tiver um tamanho menor que
+                // o nome que ja esta na arvore, inserir na esquerda
+                maior_no = insere_no_artista(&((*raiz)->esq), info, *raiz, sobe);
 
-                  if (maior_no != NULL)
-                  {
-                        if ((*raiz)->numinfo == 1)
-                        {
-                              *raiz = adiciona_no(*raiz, sobe, maior_no);
-                              maior_no = NULL;
-                        }else
-                        {
-                              char aux[50];
-
-                              strcpy(aux, sobe);
-                              maior_no = quebra_no(raiz, aux, sobe, maior_no);
-                              if (pai == NULL)
-                              {
-                                    *raiz = cria_NO_Artista(sobe,*raiz, maior_no, NULL);
-                                    maior_no = NULL;
-                              }
-                        }
-                  }
-                  
-            }
+            }else if ((*raiz)->numinfo == 1 || (*raiz)->numinfo == 2 && (strcmp(info->nome_artista, (*raiz)->info2->nome_artista) < 0)){
+                // quantidade de informação do no ja esta com duas informações porem, é menor que info 2
+                // inserir no centro
+                maior_no = insere_no_artista((&(*raiz)->centro), info, *raiz, sobe);
+            }else{
+                //se for maior, inserir no centro
+                maior_no = insere_no_artista((&(*raiz)->dir), info, *raiz, sobe);
+            }             
+        }
             
-      }
-      return maior_no;
+    }
+    if (maior_no != NULL){
+        if ((*raiz)->numinfo == 1){
+            adiciona_No_artista(raiz, sobe, maior_no);
+            maior_no = NULL;
+        }else{
+            maior_no = quebra_no(raiz, info, info, maior_no);
+            if (pai == NULL){
+                *raiz = cria_NO_Artista(sobe,*raiz, maior_no, NULL);
+                maior_no = NULL;
+            }
+        }
+    }
+    return *raiz;
 }
 
 
 void RemoveMaiorInfoEsq(Arv23_artista** RaizArv23, Arv23_artista** PaiMaior, Arv23_artista** MaiorInfoRemove, int LocalInfo, char* Situacao) {
     if (*MaiorInfoRemove != NULL) {
-        if (VerificaFolhaArtista(*MaiorInfoRemove) == 1) {
+        if (eh_folha_artista(*MaiorInfoRemove) != NULL) {
             Artista* Aux;
             if (LocalInfo == 1) {
                 Aux = (*RaizArv23)->info1;
@@ -224,7 +234,7 @@ void RemoveArtista23(Arv23_artista** RaizArv23, Arv23_artista** Pai, char* NomeA
     if (*RaizArv23 != NULL) {
         if (strcasecmp(NomeArtista, (*RaizArv23)->info1->nome_artista) == 0) {
             if (LinhaArtista == -1) {
-                if (VerificaFolhaArtista(*RaizArv23) == 1) {
+                if (eh_folha_artista(*RaizArv23) != NULL) {
                     if ((*RaizArv23)->numinfo == 2) {
                         free((*RaizArv23)->info1);
                         (*RaizArv23)->info1 = (*RaizArv23)->info2;
@@ -240,7 +250,7 @@ void RemoveArtista23(Arv23_artista** RaizArv23, Arv23_artista** Pai, char* NomeA
                 else {
                     Arv23_artista **MaiorInfoRemove = &((*RaizArv23)->esq);
                     Arv23_artista **PaiMaior = RaizArv23;
-                    RemoveMaiorInfoEsqArtista(RaizArv23, PaiMaior, MaiorInfoRemove, 1, Situacao);
+                    RemoveMaiorInfoEsq(RaizArv23, PaiMaior, MaiorInfoRemove, 1, Situacao);
                 }
             }
             else {
@@ -253,7 +263,7 @@ void RemoveArtista23(Arv23_artista** RaizArv23, Arv23_artista** Pai, char* NomeA
         else if ((*RaizArv23)->numinfo == 2 && strcasecmp(NomeArtista, (*RaizArv23)->info2->nome_artista) == 0) {
             
             if (LinhaArtista == -1) {
-                if (VerificaFolhaArtista(*RaizArv23) == 1) {
+                if (eh_folha_artista(*RaizArv23) != NULL) {
                     free((*RaizArv23)->info2);
                     (*RaizArv23)->info2 = NULL;
                     (*RaizArv23)->numinfo = 1;
@@ -261,7 +271,7 @@ void RemoveArtista23(Arv23_artista** RaizArv23, Arv23_artista** Pai, char* NomeA
                 else {
                     Arv23_artista **MaiorInfoRemove = &((*RaizArv23)->centro);
                     Arv23_artista **PaiMaior = RaizArv23;
-                    RemoveMaiorInfoEsqArtista(RaizArv23, PaiMaior, MaiorInfoRemove, 2, Situacao);
+                    RemoveMaiorInfoEsq(RaizArv23, PaiMaior, MaiorInfoRemove, 2, Situacao);
                 }
             }
             else {
@@ -394,5 +404,51 @@ void RedistribuiArv23Artista(Arv23_artista** RaizArv23, Arv23_artista** Pai) {
                 (*RaizArv23) = (*RaizArv23)->centro;
             }  
         }
+    }
+}
+/* 
+     A função strcmp devolve um valor inteiro que indica o relacionamento entre string1 e string2:
+     Um valor menor que zero significa que string1 é menor que string2. 
+     Um valor zero significa que ambas as strings são iguais.
+     Um valor maior que zero significa que string1 é maior que string2.
+    
+*/
+Arv23_artista *buscarArtista(Arv23_artista **raiz, char nome_artista[]){
+    Arv23_artista *auxBusca;
+    auxBusca = NULL;
+    if(raiz != NULL){
+        if(strcmp(nome_artista, (*raiz)->info1->nome_artista) == 0){
+            auxBusca = *raiz;
+        }else if(strcmp(nome_artista, (*raiz)->info1->nome_artista) < 0 ){
+            auxBusca = buscarArtista(&(*raiz)->esq, nome_artista);
+        }else if(strcmp(nome_artista, (*raiz)->info1->nome_artista) > 0 && strcmp(nome_artista, (*raiz)->info2->nome_artista) < 0){
+            auxBusca = buscarArtista(&(*raiz)->centro, nome_artista);
+        }else{
+            auxBusca = buscarArtista(&(*raiz)->dir, nome_artista);
+        }
+    }
+
+    return auxBusca;
+}
+
+void imprimirArtista(Arv23_artista *raiz, int nivel){
+    if(raiz != NULL){
+        // mostra info 1
+        printf("Nome  %s\n", raiz->info1->nome_artista);
+        printf("Estilo Musical  %s\n", raiz->info1->estilo_musical);
+        printf("Quantidade de Albuns  %d\n", raiz->info1->num_albuns);
+
+        // se tiver 2 info, mostra a info 2 
+        if(raiz->numinfo == 2){
+            printf("Nome  %s\n", raiz->info2->nome_artista);
+            printf("Estilo Musical  %s\n", raiz->info2->estilo_musical);
+            printf("Quantidade de Albuns  %d\n", raiz->info2->num_albuns);           
+        }
+
+        imprimirArtista(raiz->esq, nivel+1);
+        imprimirArtista(raiz->centro,nivel+1);
+        imprimirArtista(raiz->dir,  nivel+1);
+
+        printf("\n");
     }
 }
