@@ -1,9 +1,10 @@
+typedef struct info Info;
+typedef struct arv45 Arv45;
 
-typedef struct endereco Enderecos;
 
-typedef struct bloco45 Bloco45;
-
-Enderecos *criaEnderecos(char status, int inicio, int fim);
-Bloco45 *criaBloco( Enderecos end, Bloco45 *esq, Bloco45 *esqCentro, Bloco45  *centro, Bloco45 *centroDir, Bloco45 *dir);
-int eFolha(Bloco45 *raiz);
-void adiconaBloco(Bloco45 **raiz, Enderecos info, Bloco45 *maiorNo);
+Info *criaInfo(int inicio, int fim, char status);
+Arv45 *criaNo(Info *info, Arv45 *NoEsq, Arv45 *noCentroEsq);
+int ehFolha(Arv45 *no);
+void adicionaNo(Arv45 **No, Info *info, Arv45 *filho);
+Arv45 *quebraNo(Arv45 **raiz, Info *info, Info **sobe, Arv45 *filho);
+Arv45 *inserir45(Arv45 **raiz, Arv45 *pai, Info **sobe, int inicio, int fim, char status, int *flag);
