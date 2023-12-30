@@ -4,8 +4,8 @@
 
 
 int main(){
-    Artista *dadoArtista;
-    Arv23_artista *raiz, *busca;
+    Artista *dadoArtista, *busca;
+    Arv23_artista *raiz;
     char nome_artista[50];
     int opc;
     raiz = NULL; dadoArtista = NULL;busca = NULL;
@@ -42,8 +42,9 @@ int main(){
         case 4:
             printf("Digite o nome do artista que deseja remover \n");
             scanf("%s", nome_artista);
-            busca = buscarArtista(&raiz, nome_artista);
-            imprimirArtista(raiz, 0);
+            busca = buscarArtista(raiz, nome_artista);
+            imprimeDadoArtista(busca);
+            //imprimirArtista(busca, 0);
 
 
         default:

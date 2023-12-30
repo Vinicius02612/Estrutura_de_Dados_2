@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
-
+#include <stdio.h>
 typedef struct info {
     int inicio, fim;
     char status;
@@ -197,3 +197,28 @@ Arv45 *inserir45(Arv45 **raiz, Arv45 *pai, Info **sobe, int inicio, int fim, cha
     return maiorNO;
 }
 
+
+// int main() {
+//     Arv45 *root = NULL;
+//     Info *sobe = NULL;
+//     int flag = 0;
+
+//     // Inserting elements into the 4-5 tree
+//     inserir45(&root, NULL, &sobe, 10, 20, 'A', &flag);
+//     inserir45(&root, NULL, &sobe, 30, 40, 'B', &flag);
+//     inserir45(&root, NULL, &sobe, 15, 25, 'C', &flag);
+//     inserir45(&root, NULL, &sobe, 5, 8, 'D', &flag);
+//     inserir45(&root, NULL, &sobe, 35, 45, 'E', &flag);
+//     inserir45(&root, NULL, &sobe, 50, 60, 'F', &flag);
+//     inserir45(&root, NULL, &sobe, 55, 70, 'G', &flag);
+
+//     // Printing the 4-5 tree
+//     printf("4-5 Tree: ");
+//     //printTree(root);
+//     printf("\n");
+
+//     // Freeing the memory allocated for the 4-5 tree
+//     //freeTree(root);
+
+//     return 0;
+// }
