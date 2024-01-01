@@ -85,7 +85,7 @@ Arv23_artista *quebra_no(Arv23_artista **no, Artista *info, Artista *sobe, Arv23
     //O código anterior  estava passando apenas o nome do artista, sem o resto das informações
       Arv23_artista *new = NULL;
 
-      if (strcmp(info->nome_artista, (*no)->info1->nome_artista) > 0)
+      if (strcmp(info->nome_artista, (*no)->info1->nome_artista) > 0 && strcmp(info->nome_artista, (*no)->info2->nome_artista) < 0)
       {
             sobe = info; // a informação sobre por inteira, e não apenas o nome do artista
             new = cria_NO_Artista((*no)->info2, filho, (*no)->dir, NULL);
@@ -116,16 +116,15 @@ Arv23_artista *eh_folha_artista(Arv23_artista *raiz){
 }
 
  void adiciona_No_artista(Arv23_artista **raiz, Artista *info, Arv23_artista *filho_dir){
-      if(strcmp(info->nome_artista,(*raiz)->info1->nome_artista) < 0){
-            (*raiz)->info2 = (*raiz)->info1;
-            (*raiz)->info1 = info;
-            (*raiz)->dir = (*raiz)->centro;
-            (*raiz)->centro = (*raiz)->dir;
-      }else
-      {
-            (*raiz)->info2 = info;
-            (*raiz)->dir = filho_dir;
-      }
+    if(strcmp(info->nome_artista,(*raiz)->info1->nome_artista) < 0){
+        (*raiz)->info2 = (*raiz)->info1;
+        (*raiz)->info1 = info;
+        (*raiz)->dir = (*raiz)->centro;
+        (*raiz)->centro = (*raiz)->dir;
+    }else{
+        (*raiz)->info2 = info;
+        (*raiz)->dir = filho_dir;
+    }
       (*raiz)->numinfo = 2;
 }
 
@@ -157,7 +156,7 @@ Arv23_artista *insere_no_artista(Arv23_artista **raiz, Artista *info, Arv23_arti
                 // o nome que ja esta na arvore, inserir na esquerda
                 maior_no = insere_no_artista(&((*raiz)->esq), info, *raiz, sobe);
 
-            }else if ((*raiz)->numinfo == 1 || (*raiz)->numinfo == 2 && (strcmp(info->nome_artista, (*raiz)->info2->nome_artista) < 0)){
+            }else if ((strcmp(info->nome_artista, (*raiz)->info1->nome_artista) > 0) && strcmp(info->nome_artista, (*raiz)->info2->nome_artista) < 0){
                 // quantidade de informação do no ja esta com duas informações porem, é menor que info 2
                 // inserir no centro
                 maior_no = insere_no_artista((&(*raiz)->centro), info, *raiz, sobe);
@@ -180,7 +179,7 @@ Arv23_artista *insere_no_artista(Arv23_artista **raiz, Artista *info, Arv23_arti
             }
         }
     }
-    return *raiz;
+    return maior_no;
 }
 
 
@@ -413,30 +412,36 @@ void RedistribuiArv23Artista(Arv23_artista** RaizArv23, Arv23_artista** Pai) {
      Um valor maior que zero significa que string1 é maior que string2.
     
 */
-Arv23_artista *buscarArtista(Arv23_artista **raiz, char nome_artista[]){
-    Arv23_artista *auxBusca;
-    auxBusca = NULL;
+Artista *buscarArtista(Arv23_artista *raiz, char nome_artista[]){
+    Artista *auxBusca;
     if(raiz != NULL){
-        if(strcmp(nome_artista, (*raiz)->info1->nome_artista) == 0){
-            auxBusca = *raiz;
-        }else if(strcmp(nome_artista, (*raiz)->info1->nome_artista) < 0 ){
-            auxBusca = buscarArtista(&(*raiz)->esq, nome_artista);
-        }else if(strcmp(nome_artista, (*raiz)->info1->nome_artista) > 0 && strcmp(nome_artista, (*raiz)->info2->nome_artista) < 0){
-            auxBusca = buscarArtista(&(*raiz)->centro, nome_artista);
+        if(strcmp(nome_artista, (raiz)->info1->nome_artista) == 0){
+            auxBusca = raiz->info1;
+        }
+        if((raiz)->numinfo == 2 && strcmp(nome_artista, (raiz)->info2->nome_artista) == 0){
+            auxBusca = raiz->info2;
+        }else if(strcmp(nome_artista, (raiz)->info1->nome_artista) < 0 ){
+            auxBusca = buscarArtista((raiz)->esq, nome_artista);
+        }else if(strcmp(nome_artista, (raiz)->info1->nome_artista) > 0 && strcmp(nome_artista, (raiz)->info2->nome_artista) < 0){
+            auxBusca = buscarArtista((raiz)->centro, nome_artista);
         }else{
-            auxBusca = buscarArtista(&(*raiz)->dir, nome_artista);
+            auxBusca = buscarArtista((raiz)->dir, nome_artista);
         }
     }
 
     return auxBusca;
 }
 
+void imprimeDadoArtista(Artista *dado){
+    printf("Nome %s\n", dado->nome_artista);
+    printf("Estilo musical%s\n", dado->estilo_musical);
+    printf(" Quantidade de albums %d\n", dado->num_albuns);
+}
+
 void imprimirArtista(Arv23_artista *raiz, int nivel){
     if(raiz != NULL){
         // mostra info 1
-        printf("Nome  %s\n", raiz->info1->nome_artista);
-        printf("Estilo Musical  %s\n", raiz->info1->estilo_musical);
-        printf("Quantidade de Albuns  %d\n", raiz->info1->num_albuns);
+        imprimeDadoArtista(raiz->info1);
 
         // se tiver 2 info, mostra a info 2 
         if(raiz->numinfo == 2){

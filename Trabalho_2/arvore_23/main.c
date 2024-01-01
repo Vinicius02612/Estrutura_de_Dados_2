@@ -4,8 +4,8 @@
 
 
 int main(){
-    Artista *dadoArtista;
-    Arv23_artista *raiz, *busca;
+    Artista *dadoArtista, *busca;
+    Arv23_artista *raiz;
     char nome_artista[50];
     int opc;
     raiz = NULL; dadoArtista = NULL;busca = NULL;
@@ -26,7 +26,7 @@ int main(){
             if(dadoArtista != NULL)
                 printf("Dado lido\n");
             raiz = insere_no_artista(&raiz,dadoArtista, NULL, NULL);
-            if(raiz != NULL){
+            if(raiz == NULL){
                 printf("Dado inserido com sucesso \n");
             }else{
                 printf("Não foi possivel inserir o dados ");
@@ -42,10 +42,8 @@ int main(){
         case 4:
             printf("Digite o nome do artista que deseja remover \n");
             scanf("%s", nome_artista);
-            busca = buscarArtista(&raiz, nome_artista);
-            imprimirArtista(raiz, 0);
-
-
+            busca = buscarArtista(raiz, nome_artista);
+            imprimirArtista(busca, 0);
         default:
             printf("Informe uma opção válida");
             break;
