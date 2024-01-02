@@ -5,18 +5,23 @@
 
 int main(){
     Artista *dadoArtista, *busca;
-    Arv23_artista *raiz;
-    char nome_artista[50];
+    Album *dadaAlbum, *buscaAlbum;
+    Arv23_album *raiz;
+    Arv23_artista *raizAlbum;
+    char nome_artista[50], titulo;
     int opc;
-    raiz = NULL; dadoArtista = NULL;busca = NULL;
+    raiz = NULL; dadoArtista = NULL;busca = NULL;raizAlbum = NULL; buscaAlbum  = NULL; dadaAlbum = NULL;
     do
     {
         printf("Informe a opção desejada: \n");
         printf(
             "1 - Cadastrar Artista \n"
-            "2 - Remover Artista \n"
-            "3 - Imprimir artista \n"
+            "2 - Cadastrar Album \n"
+            "3 - Cadastrar Musica \n"
             "4 - Buscar Artista \n"
+            "5 - Buscar Album \n"
+            "6 - Buscar Musica \n"
+
         );
         scanf("%d", &opc);
         switch (opc)
@@ -33,9 +38,8 @@ int main(){
             }
             break;
         case 2:
-            printf("Digite o nome do artista que deseja remover \n");
-            scanf("%s", nome_artista);
-            RemoveArtista23(&raiz, NULL, nome_artista, 0, "n");
+            
+            break;
         case 3:
             imprimirArtista(raiz, 0);
             break;
@@ -43,7 +47,7 @@ int main(){
             printf("Digite o nome do artista que deseja remover \n");
             scanf("%s", nome_artista);
             busca = buscarArtista(raiz, nome_artista);
-            imprimirArtista(busca, 0);
+            imprimeDadoArtista(busca);
         default:
             printf("Informe uma opção válida");
             break;

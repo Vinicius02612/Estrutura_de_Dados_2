@@ -18,8 +18,25 @@ void RemoveMaiorInfoEsq(Arv23_artista **RaizArv23, Arv23_artista **PaiMaior, Arv
 void RemoveArtista23(Arv23_artista **RaizArv23, Arv23_artista **Pai, char *NomeArtista, int LinhaArtista, char *Situacao);
 void RedistribuiArv23Artista(Arv23_artista **RaizArv23, Arv23_artista **Pai);
 void imprimirArtista(Arv23_artista *raiz, int nivel);
-
 void imprimeDadoArtista(Artista *dado);
+
 // -----------------REFERENTE A ALBUM-----------------
+Album *lerDadoAlbum();
+Arv23_album *cria_NO_Album(Album *info, Arv23_album *esq, Arv23_album *dir, Arv23_album *centro);
+Arv23_album *eh_folha_album(Arv23_album *raiz);
+Arv23_album *quebra_no_Album(Arv23_album **no, Album *info, Album *sobe, Arv23_album *filho);
+void adiciona_No_album(Arv23_album **raiz, Album *info, Arv23_album *filho_dir);
+Arv23_album *insere_no_album(Arv23_album **raiz, Album *info, Arv23_album *pai, Album *sobe);
+void RemoveMaiorInfoEsqAlbum(Arv23_album** RaizArv23, Arv23_album** PaiMaior, Arv23_album** MaiorInfoRemove, int LocalInfo, char* Situacao);
+void RemoveAlbum23(Arv23_album** RaizArv23, Arv23_album** Pai, char* titulo, int LinhaAlbum, char* Situacao);
+Album* buscarAlbum(Arv23_album* RaizArv23, char* titulo);
+void imprimeDadoAlbum(Album *dado);
+void imprimirAlbum(Arv23_album *raiz, int nivel);
 
 // -----------------REFERENTE A MUSICA-----------------
+ListaDupla *inicializarLista();
+Musica *lerDadosMusica();
+ListaDupla *adicionarMusica(ListaDupla **lista, Musica *novaMusica);
+ListaDupla *removerMusica(ListaDupla **lista, char titulo[]);
+void imprimirLista(ListaDupla *lista);
+void liberarLista(ListaDupla* lista);
