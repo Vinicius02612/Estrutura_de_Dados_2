@@ -198,6 +198,89 @@ Arv45 *inserir45(Arv45 **raiz, Arv45 *pai, Info **sobe, int inicio, int fim, cha
 }
 
 
+void MaiorInfoRemoveEsq(Arv45 **raiz, Arv45 **PaiMaior, Arv45 **MaiorInfoRemove, int LocalInfo, int *ValorRemover) {
+    if (*MaiorInfoRemove != NULL) {
+        if ((*MaiorInfoRemove)->esq == NULL) {
+            Info aux;
+            if (LocalInfo == 1) {
+                aux = *(*raiz)->Info1;
+                if ((*MaiorInfoRemove)->NInfos == 1) {
+                    *(*raiz)->Info1 = *(*MaiorInfoRemove)->Info1;
+                    *(*MaiorInfoRemove)->Info1 = aux;
+                } else if ((*MaiorInfoRemove)->NInfos == 2) {
+                    *(*raiz)->Info1 = *(*MaiorInfoRemove)->Info2;
+                    *(*MaiorInfoRemove)->Info2 = aux;
+                } else if ((*MaiorInfoRemove)->NInfos == 3) {
+                    *(*raiz)->Info1 = *(*MaiorInfoRemove)->Info3;
+                    *(*MaiorInfoRemove)->Info3 = aux;
+                } else {
+                    *(*raiz)->Info1 = *(*MaiorInfoRemove)->Info4;
+                    *(*MaiorInfoRemove)->Info4 = aux;
+                }
+            } else if (LocalInfo == 2) {
+                aux = *(*raiz)->Info2;
+                if ((*MaiorInfoRemove)->NInfos == 1) {
+                    *(*raiz)->Info2 = *(*MaiorInfoRemove)->Info1;
+                    *(*MaiorInfoRemove)->Info1 = aux;
+                } else if ((*MaiorInfoRemove)->NInfos == 2) {
+                    *(*raiz)->Info2 = *(*MaiorInfoRemove)->Info2;
+                    *(*MaiorInfoRemove)->Info2 = aux;
+                } else if ((*MaiorInfoRemove)->NInfos == 3) {
+                    *(*raiz)->Info2 = *(*MaiorInfoRemove)->Info3;
+                    *(*MaiorInfoRemove)->Info3 = aux;
+                } else {
+                    *(*raiz)->Info2 = *(*MaiorInfoRemove)->Info4;
+                    *(*MaiorInfoRemove)->Info4 = aux;
+                }
+            } else if (LocalInfo == 3) {
+                aux = *(*raiz)->Info3;
+                if ((*MaiorInfoRemove)->NInfos == 1) {
+                    *(*raiz)->Info3 = *(*MaiorInfoRemove)->Info1;
+                    *(*MaiorInfoRemove)->Info1 = aux;
+                } else if ((*MaiorInfoRemove)->NInfos == 2) {
+                    *(*raiz)->Info3 = *(*MaiorInfoRemove)->Info2;
+                    *(*MaiorInfoRemove)->Info2 = aux;
+                } else if ((*MaiorInfoRemove)->NInfos == 3) {
+                    *(*raiz)->Info3 = *(*MaiorInfoRemove)->Info3;
+                    *(*MaiorInfoRemove)->Info3 = aux;
+                } else {
+                    *(*raiz)->Info3 = *(*MaiorInfoRemove)->Info4;
+                    *(*MaiorInfoRemove)->Info4 = aux;
+                }
+            } else if (LocalInfo == 4) {
+                aux = *(*raiz)->Info4;
+                if ((*MaiorInfoRemove)->NInfos == 1) {
+                    *(*raiz)->Info4 = *(*MaiorInfoRemove)->Info1;
+                    *(*MaiorInfoRemove)->Info1 = aux;
+                } else if ((*MaiorInfoRemove)->NInfos == 2) {
+                    *(*raiz)->Info4 = *(*MaiorInfoRemove)->Info2;
+                    *(*MaiorInfoRemove)->Info2 = aux;
+                } else if ((*MaiorInfoRemove)->NInfos == 3) {
+                    *(*raiz)->Info4 = *(*MaiorInfoRemove)->Info3;
+                    *(*MaiorInfoRemove)->Info3 = aux;
+                } else {
+                    *(*raiz)->Info4 = *(*MaiorInfoRemove)->Info4;
+                    *(*MaiorInfoRemove)->Info4 = aux;
+                }
+            }
+
+            *ValorRemover = aux.inicio;
+        } else {
+            if ((*MaiorInfoRemove)->NInfos == 1) {
+                MaiorInfoRemoveEsq(raiz, MaiorInfoRemove, &((*MaiorInfoRemove)->cen1), LocalInfo, ValorRemover);
+            } else if ((*MaiorInfoRemove)->NInfos == 2) {
+                MaiorInfoRemoveEsq(raiz, MaiorInfoRemove, &((*MaiorInfoRemove)->cen2), LocalInfo, ValorRemover);
+            } else if ((*MaiorInfoRemove)->NInfos == 3) {
+                MaiorInfoRemoveEsq(raiz, MaiorInfoRemove, &((*MaiorInfoRemove)->cen3), LocalInfo, ValorRemover);
+            } else if ((*MaiorInfoRemove)->NInfos == 4) {
+                MaiorInfoRemoveEsq(raiz, MaiorInfoRemove, &((*MaiorInfoRemove)->dir), LocalInfo, ValorRemover);
+            }
+        }
+    }
+}
+
+
+
 // int main() {
 //     Arv45 *root = NULL;
 //     Info *sobe = NULL;
