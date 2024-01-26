@@ -5,7 +5,7 @@
             "name": "C/C++: gcc-11 Compilar e depurar o arquivo ativo",
             "type": "cppdbg",
             "request": "launch",
-            "program": "/home/annyel/Área de Trabalho/6º periodo/ED 2/Estrutura_de_Dados_2/Trabalho_2/arvore_23/saida",
+            "program": "/home/vinicius/Documentos/Estrutura de Dados II/Trabalho_ED_II_Vinicius_Nunes/Trabalho_2/arvore_23/saida",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",

@@ -70,7 +70,7 @@ int main() {
               else{
                 status_bloco = 'O';
               }
-            }while(flag > 1  flag < 0);
+            }while(flag > 1 && flag < 0);
             do{
                 do{
                     printf("Endereco final do bloco : ");
@@ -140,7 +140,7 @@ case 2:
             printf("\n\n\t\tERROR 404\n\n");
             break;
         default:
-            if(escolha < 0  escolha > 3){
+            if(escolha < 0 &&  escolha > 3){
                 printf("Opcao nao encontrada.\n\n");
             }
             break;
